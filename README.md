@@ -1,2 +1,2 @@
 # sight
-👁Sight: State-of-the-art Computer Vision for TensorFlow
+👁Sight: State-of-the-art Object Detection for TensorFlow
