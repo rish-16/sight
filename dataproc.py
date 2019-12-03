@@ -9,5 +9,3 @@ class DataAnnotator(object):
 
 	def convert_to_tfrecord(self, data):
 		pass
-
-	def 
