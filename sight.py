@@ -3,9 +3,6 @@ import numpy as np
 import cv2
 
 class Sightseer(object):
-	def __init__(self, weights_path):
-		self.weights_path = weights_path
-
 	def open_vidsource(self, write_data=False, set_gray=True, kill_key="q", width=160, height=120):
 
 		cap = cv2.VideoCapture(0)
@@ -30,6 +27,8 @@ class Sightseer(object):
 
 		cap.release()
 		cv2.destroyAllWindows()	
+
+		frames = np.array(frames)
 
 		if write_data:
 			return frames
