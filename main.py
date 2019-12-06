@@ -5,7 +5,7 @@ from dataproc import DataAnnotator
 ss = Sightseer()
 data = ss.open_vidsource(set_gray=True, write_data=True)
 
-for i in data:
-	print (i.shape)
+yolonet = YOLOClient(data)
+preds = yolonet.get_predictions(save_data=True, render=True)
 
-print (data.shape)
+print (preds)

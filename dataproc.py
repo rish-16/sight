@@ -7,5 +7,5 @@ class DataAnnotator(object):
 	def __init__(self):
 		pass
 
-	def convert_to_tfrecord(self, data):
+	def xml_to_tfrecord(self, data):
 		pass
