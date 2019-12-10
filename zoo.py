@@ -1,12 +1,30 @@
 import tensorflow as tf
-import tqdm
 import numpy as np
-import urllib.request
+from termcolor import colored
+from clint.textui import progress
+import requests
 import cv2
 
 class YOLO9000Client(object):
-	# def __init__(self):
-		# self.data = data
+	def __init__(self):
+		self.data = None
+
+	def download_file(self, url, name):
+		"""
+		Download helper function to download 
+		single file from URL
+		"""
+
+		r = requests.get(url, stream=True)
+		with open(name, 'wb') as f:
+			total_length = int(r.headers.get('content-length'))
+			print ("Downloading {}...".format(colored(name, 'cyan')))
+			for chunk in progress.bar(r.iter_content(chunk_size=8192), expected_size=(total_length/8192) + 1): 
+				if chunk:
+					f.write(chunk)
+					f.flush()
+
+			return local_filename		
 
 	def download_model(self):
 		"""
@@ -17,13 +35,10 @@ class YOLO9000Client(object):
 		weights_url = "https://pjreddie.com/media/files/yolov3.weights"
 		config_url = "https://github.com/pjreddie/darknet/blob/master/cfg/yolov3.cfg"
 
-		# try:
-		urllib.request.urlretrieve(weights_url, "./yolov3.weights")
-		urllib.request.urlretrieve(config_url, "./yolov3.cfg")
+		weights = self.download_file(weights_url, "yolov3.weights")
+		config = self.download_file(config_url, "yolov3.cfg")
 
-		print ("Weights anc config file downloaded successfully!")
-		# except:
-			# print ("Oh no! Something went wrong with the download. Please try again.")
+		print ("Weights and config file downloaded successfully!")
 
 	def load_model(self, weights_path):
 		"""
