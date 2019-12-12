@@ -46,7 +46,7 @@ class YOLO9000Client(object):
 		"""
 		pass
 
-	def get_predictions(self, save_data=True, render=True):
+	def get_predictions(self, data, save_data=True, render=True):
 		"""
 		Returns array of dictionaries of all probable classes
 		with bounding boxes and confidence scores.
