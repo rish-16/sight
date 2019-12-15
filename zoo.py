@@ -46,6 +46,12 @@ class YOLO9000Client(object):
 		"""
 		pass
 
+	def run_single_frame(self, frame):
+		"""
+		Runs YOLO prediction on a single frame
+		"""
+		pass
+
 	def get_predictions(self, data, save_data=True, render=True):
 		"""
 		Returns array of dictionaries of all probable classes
@@ -53,7 +59,8 @@ class YOLO9000Client(object):
 
 		Each element in the array is for each input image.
 		"""
-		pass
+		for frame in data:
+
 
 class SSDClient(object):
 	def __init__(self, data):
