@@ -99,4 +99,3 @@ class MaskRCNNClient(object):
 		Each element in the array is for each input image.
 		"""
 		pass
-
