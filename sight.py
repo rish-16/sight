@@ -30,7 +30,7 @@ class Sightseer(object):
 
 				if return_data:
 					return frames
-					
+
 				break
 
 		cap.release()
@@ -67,3 +67,15 @@ class Sightseer(object):
 
 		if return_data:
 			return frames
+
+	def load_vidsource(self, filepath, set_gray=True):
+		vidcap = cv2.VideoCapture(filepath)
+		success,image = vidcap.read()
+		frames = []
+		while success:
+			frame, image = vidcap.read()
+			print('Read a new frame: ', frame)
+			frames.append(frame)
+
+		return frame
+			
