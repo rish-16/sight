@@ -90,5 +90,7 @@ class Sightseer(object):
 		vidcap.release()
 		cv2.destroyAllWindows()
 
+		frames = np.array(frames)
+
 		return frames
 			
