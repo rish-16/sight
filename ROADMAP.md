@@ -7,10 +7,10 @@ This document acts as a sort of to-do list. It contains all the present requirem
 ## The Components
 `sight` is centered around 4 major components:
 
-- **Sightseer:** Obtains image data or video footage
-- **Proc:** Provides image/frame-wise annotation tools
-- **Zoo:** Stores the wrappers over all state-of-the-art models and configs
-- **Serve:** Provides deployment and model serving protocols and services
+- [ ] **Sightseer:** Obtains image data or video footage
+- [ ] **Proc:** Provides image/frame-wise annotation tools
+- [ ] **Zoo:** Stores the wrappers over all state-of-the-art models and configs
+- [ ] **Serve:** Provides deployment and model serving protocols and services
 
 ---
 
