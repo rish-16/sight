@@ -68,14 +68,27 @@ class Sightseer(object):
 		if return_data:
 			return frames
 
-	def load_vidsource(self, filepath, set_gray=True):
+	def load_vidsource(self, filepath, set_gray=True, kill_key="q"):
 		vidcap = cv2.VideoCapture(filepath)
-		success,image = vidcap.read()
+		frame, image = vidcap.read()
 		frames = []
-		while success:
+		while frame:
 			frame, image = vidcap.read()
-			print('Read a new frame: ', frame)
-			frames.append(frame)
+			print (image.shape)
 
-		return frame
+			if set_gray:
+				new_frame = cv2.cvtColor(np.asarray(image), cv2.COLOR_BGR2GRAY)
+				frames.append(new_frame)
+				cv2.imshow('frame', new_frame)
+			else:
+				cv2.imshow('frame', image)
+				frames.append(image)
+
+			if cv2.waitKey(1) & 0xFF == ord(kill_key):
+				break
+		
+		vidcap.release()
+		cv2.destroyAllWindows()
+
+		return frames
 			
