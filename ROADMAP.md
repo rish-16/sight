@@ -18,38 +18,38 @@ This document acts as a sort of to-do list. It contains all the present requirem
 
 ### Sightseer
 
-[x] Webcam footage
-[x] Screen grab
-[x] Preloaded video footage
-[] Realtime streaming
+- [x] Webcam footage
+- [x] Screen grab
+- [x] Preloaded video footage
+- [ ] Realtime streaming
 
 ### Proc
 
-[] CSV
-[] XML
-[] Conversion to `TFRecords`
+- [ ] CSV
+- [ ] XML
+- [ ] Conversion to `TFRecords`
 
 ### Zoo 
 
 **Models**
 
-[] YOLO9000
-[] Mask RCNN
-[] Fast/Faster RCNN
-[] TensorFlow Object Detection
-[] Single Shot Detector
-[] Finetuning methods
+- [ ] YOLO9000
+- [ ] Mask RCNN
+- [ ] Fast/Faster RCNN
+- [ ] TensorFlow Object Detection
+- [ ] Single Shot Detector
+- [ ] Finetuning methods
 
 **Add-ons** 
 
-[] Finetuning framework
-[] Multi-hardware support (CPU, GPU, TPU)
+- [ ] Finetuning framework
+- [ ] Multi-hardware support (CPU, GPU, TPU)
 
 ### Serve
 
-[] Google Cloud Platform support
-[] Amazon Web Services support
-[] PySpark for realtime streaming
+- [ ] Google Cloud Platform support
+- [ ] Amazon Web Services support
+- [ ] PySpark for realtime streaming
 
 ---
 
