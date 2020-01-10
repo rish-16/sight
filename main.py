@@ -1,7 +1,6 @@
 from sight import Sightseer
-from sight.zoo import YOLO9000
 
 ss = Sightseer()
-data = ss.load_vidsource(filepath="./tony.mp4", set_gray=True)
+data = ss.load_webcam(set_gray=False, return_data=True)
 
 print (data.shape)
