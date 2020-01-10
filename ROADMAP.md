@@ -27,9 +27,12 @@ This document acts as a sort of to-do list. It contains all the present requirem
 
 ### Proc
 
-- [ ] CSV
-- [ ] XML
-- [ ] Conversion to `TFRecords`
+- [x] xml2csv
+- [ ] json2csv
+- [ ] csv2tfrecord
+- [ ] csv2xml
+- [ ] csv2json
+- [ ] tfrecord2csv
 
 ### Zoo 
 
