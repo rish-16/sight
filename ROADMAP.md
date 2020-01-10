@@ -27,12 +27,12 @@ This document acts as a sort of to-do list. It contains all the present requirem
 
 ### Proc
 
-- [x] `xml2csv`
-- [x] `json2csv`
-- [ ] `csv2tfrecord`
-- [ ] `csv2xml`
-- [ ] `csv2json`
-- [ ] `tfrecord2csv`
+- [x] `xml_to_csv`
+- [x] `json_to_csv`
+- [ ] `csv_to_tfrecord`
+- [ ] `csv_to_xml`
+- [ ] `csv_to_json`
+- [ ] `tfrecord_to_csv`
 
 ### Zoo 
 

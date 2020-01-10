@@ -21,7 +21,7 @@ class DataAnnotator(object):
 		xml_df = pd.DataFrame(annotations, columns=columns)
 		xml_df.to_csv(outfile, index=None)
 
-	def xml2csv(self, xmlpath, csvpath):
+	def xml_to_csv(self, xmlpath, csvpath):
 		annotations = []
 		for xml_file in glob.glob(xml_dir + '/*.xml'):
 			tree = ET.parse(xml_file)
@@ -36,8 +36,7 @@ class DataAnnotator(object):
 
 		self.__list_to_csv(annotations, csvpath)
 
-	def json2csv(self, jsonpath, csvpath):
-		
+	def json_to_csv(self, jsonpath, csvpath):
 		with open(jsonpath) as f:
 			images = json.load(f)
 
