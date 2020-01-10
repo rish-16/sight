@@ -1,3 +1,5 @@
+import json
+import glob
 import tensorflow as tf
 import numpy as np
 import cv2
@@ -26,13 +28,33 @@ class DataAnnotator(object):
 			root = tree.getroot()
 			for member in root.findall('object'):
 				value = (root.find('filename').text,
-						 int(root.find('size')[0].text),
-						 int(root.find('size')[1].text), member[0].text,
+						 int(root.find('size')[0].text), int(root.find('size')[1].text), 
+						 member[0].text,
 						 int(member[4][0].text), int(member[4][1].text),
 						 int(member[4][2].text), int(member[4][3].text))
 				annotations.append(value)
 
-		self.__list_to_csv(annotations, output_file)
+		self.__list_to_csv(annotations, csvpath)
 
-	def xml_to_tfrecord(self, data):
-		pass
+	def json2csv(self, jsonpath, csvpath):
+		
+		with open(jsonpath) as f:
+			images = json.load(f)
+
+		annotations = []
+
+		for entry in images:
+			filename = images[entry]['filename']
+			for region in images[entry]['regions']:
+				c = region['region_attributes']['class']
+				xmin = region['shape_attributes']['x']
+				ymin = region['shape_attributes']['y']
+				xmax = xmin + region['shape_attributes']['width']
+				ymax = ymin + region['shape_attributes']['height']
+				width = 0
+				height = 0
+
+				value = (filename, width, height, c, xmin, ymin, xmax, ymax)
+				annotations.append(value)
+
+		self.__list_to_csv(annotations, csvpath)
