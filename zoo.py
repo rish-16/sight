@@ -61,26 +61,6 @@ class YOLO9000Client(object):
 		"""
 		for frame in data:
 
-
-class SSDClient(object):
-	def __init__(self, data):
-		self.data = data
-
-	def load_weights(self, weights_path):
-		"""
-		Search for weights and load into model
-		"""
-		pass
-
-	def get_predictions(self, save_data=True, render=True):
-		"""
-		Returns array of dictionaries of all probable classes
-		with bounding boxes and confidence scores.
-
-		Each element in the array is for each input image.
-		"""
-		pass
-
 class MaskRCNNClient(object):
 	def __init__(self, data):
 		self.data = data
