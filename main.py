@@ -1,9 +1,8 @@
 from sight import Sightseer
-import proc
+from proc import DataAnnotator
 
-ss = Sightseer()
-data = ss.load_webcam(set_gray=False, return_data=True)
+da = DataAnnotator(['racoon'])
 
-proc.xml_to_csv("./train/xml/", "/train/csv/")
-
-print (data.shape)
+xmlpath = "./test_data/"
+csvpath = "./test_data/csv/"
+da.xml_to_csv(xmlpath, csvpath)
