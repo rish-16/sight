@@ -92,3 +92,5 @@ class Sightseer(object):
 			frames = np.array(frames)
 			return frames
 			
+	def stream(self, conn, port, buffer):
+		pass
