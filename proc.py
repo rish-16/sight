@@ -10,14 +10,14 @@ class DataAnnotator(object):
 	def __init__(self, classes):
 		self.classes = classes # array of class labels
 		
-	def __list_to_csv(self, annotations, outfile):
+	def list_to_csv(self, annotations, outfile):
 		columns = ['filename', 'width', 'height', 'class', 'xmin', 'ymin', 'xmax', 'ymax']
 		xml_df = pd.DataFrame(annotations, columns=columns)
 		xml_df.to_csv(outfile, index=None)
 
 	def xml_to_csv(self, xml_path, csv_path):
 		annotations = []
-		for xml_file in glob.glob(xml_path + '/*.xml'):
+		for xml_file in glob.glob(xml_path + '*.xml'):
 			tree = ET.parse(xml_file)
 			root = tree.getroot()
 			for member in root.findall('object'):
@@ -28,7 +28,7 @@ class DataAnnotator(object):
 						 int(member[4][2].text), int(member[4][3].text))
 				annotations.append(value)
 
-		self.__list_to_csv(annotations, csv_path)
+		self.list_to_csv(annotations, csv_path)
 
 	def json_to_csv(self, jsonpath, csvpath):
 		with open(jsonpath) as f:
@@ -50,4 +50,4 @@ class DataAnnotator(object):
 				value = (filename, width, height, c, xmin, ymin, xmax, ymax)
 				annotations.append(value)
 
-		self.__list_to_csv(annotations, csvpath)
+		self.list_to_csv(annotations, csvpath)
