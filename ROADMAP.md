@@ -47,7 +47,7 @@ This document acts as a sort of to-do list. It contains all the present requirem
 **Add-ons** 
 
 - [ ] Finetuning framework
-- [ ] Multi-hardware support (CPU, GPU, TPU)
+- [ ] Hardware acceleration support (CPU, GPU, TPU)
 
 ### Serve
 
