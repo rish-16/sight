@@ -1,7 +1,6 @@
 import numpy as np
 import tensorflow as tf
-from tensorflow.keras.layers import Dense, LeakyReLU, Input, Conv2D, ZeroPadding2D, UpSampling2D, BatchNormalization
-from tensorflow.keras.merge import add, concatenate
+from tensorflow.keras.layers import Dense, LeakyReLU, Input, Conv2D, ZeroPadding2D, UpSampling2D, BatchNormalization, add, concatenate
 from tensorflow.keras.models import Model
 import struct
 import cv2
@@ -56,7 +55,7 @@ class WeightsLoader():
                     conv_layer.set_weights([kernel, bias])
                 else:
                     kernel = self.read_bytes(np.prod(conv_layer.get_weights()[0].shape))
-                    kernel = kernel.reshape(list(reveresed(conv_layer.get_weights()[0].shape)))
+                    kernel = kernel.reshape(list(reversed(conv_layer.get_weights()[0].shape)))
                     kernel = kernel.transpose([2, 3, 1, 0])
                     conv_layer.set_weights([kernel])
 
@@ -101,7 +100,7 @@ def ConvBlock(inp, convs, skip=True):
         if conv['stride'] > 1: x = ZeroPadding2D(((1,0),(1,0)))(x)
         x = Conv2D(conv['filter'], conv['kernel'], strides=conv['stride'], padding="valid" if conv['stride']>1 else "same", name="conv_"+str(conv['layer_idx']), use_bias=False if conv['bnorm'] else True)(x)
         if conv['bnorm']: x = BatchNormalization(epsilon=0.001, name="bnorm_"+str(conv['layer_idx']))(x)
-        if conv['leaky']: x = LeakyReLU(alpha=0.1, name="leaky_"+conv['layer_idx'])(x)
+        if conv['leaky']: x = LeakyReLU(alpha=0.1, name="leaky_"+str(conv['layer_idx']))(x)
 
     return add([skip_conn, x]) if skip else x
 
@@ -213,11 +212,11 @@ def YOLO9000():
                                 {'filter': 256, 'kernel': 3, 'stride': 1, 'bnorm': True,  'leaky': True,  'layer_idx': 104},
                                 {'filter': 255, 'kernel': 1, 'stride': 1, 'bnorm': False, 'leaky': False, 'layer_idx': 105}], skip=False)
 
-    model = Model(input_image, [yolo_82, yolo_94, yolo_106])    
+    model = Model(inp_img, [yolo_82, yolo_94, yolo_106])    
     return model
 
 def preprocess(img, netw, neth):
-    newh, neww = img.shape
+    newh, neww = img.shape[:2]
 
     if float(netw)/neww < float(neth)/newh:
         newh = (newh * netw) / neww
@@ -229,10 +228,137 @@ def preprocess(img, netw, neth):
     resized = cv2.resize(img[:,:,::-1]/255, (int(neww), int(newh)))
 
     new_img = np.ones([neth, netw, 3]) * 0.5
-    new_img[int(neth - newh)//2]: int((neth + newh)//2), int((netw - neww)//2):int((netw + neww)//2), :] = resized
+    new_img[int(neth - newh)//2: int((neth + newh)//2), int((netw - neww)//2):int((netw + neww)//2), :] = resized
     new_img = np.expand_dims(new_img, 0)
 
     return new_img
 
-def decode_netout(netout, anchors, obj_threh, nms_thresh, neth, netw):
+def decode_netout(netout, anchors, obj_thresh, nms_thresh, neth, netw):
+    gridh, gridw = netout.shape[:2]
+    nb_box = 3
+    netout = netout.reshape([gridh, gridw, nb_box, -1])
+    nb_class = netout.shape[-1] - 5
+
+    boxes = []
     
+    netout[..., :2]  = sigmoid(netout[..., :2])
+    netout[..., 4:]  = sigmoid(netout[..., 4:])
+    netout[..., 5:]  = netout[..., 4][..., np.newaxis] * netout[..., 5:]
+    netout[..., 5:] *= netout[..., 5:] > obj_thresh
+
+    for i in range(gridh * gridw):
+        row = i / gridw
+        col = i % gridw
+
+        for b in range(nb_box):
+            objectness = netout[int(row)][int(col)][b][4]
+
+            if(objectness.all() <= obj_thresh): continue
+
+            x, y, w, h = netout[int(row)][int(col)][b][:4]
+
+            x = (col + x) / gridw 
+            y = (row + y) / gridh 
+            w = anchors[2 * b + 0] * np.exp(w) / netw
+            h = anchors[2 * b + 1] * np.exp(h) / neth
+
+            classes = netout[int(row)][col][b][5:]
+
+            box = BoundingBox(x-w/2, y-h/2, x+w/2, y+h/2, objectness, classes)
+
+            boxes.append(box)    
+
+    return boxes
+
+def rectify_yolo_boxes(boxes, img_h, img_w, neth, netw):
+    if (float(net_w)/image_w) < (float(net_h)/image_h):
+        neww = netw
+        newh = (img_h * netw)/ img_w
+    else:
+        newh = netw
+        neww = (img_w * neth) / img_h
+        
+    for i in range(len(boxes)):
+        x_offset, x_scale = (netw - neww)/2./netw, float(neww)/netw
+        y_offset, y_scale = (neth - newh)/2./neth, float(newh)/neth
+        
+        boxes[i].xmin = int((boxes[i].xmin - x_offset) / x_scale * image_w)
+        boxes[i].xmax = int((boxes[i].xmax - x_offset) / x_scale * image_w)
+        boxes[i].ymin = int((boxes[i].ymin - y_offset) / y_scale * image_h)
+        boxes[i].ymax = int((boxes[i].ymax - y_offset) / y_scale * image_h)
+                
+def do_nms(boxes, nms_thresh):
+    if len(boxes) > 0:
+        nb_class = len(boxes[0].classes)
+    else:
+        return
+        
+    for c in range(nb_class):
+        sorted_indices = np.argsort([-box.classes[c] for box in boxes])
+
+        for i in range(len(sorted_indices)):
+            index_i = sorted_indices[i]
+
+            if boxes[index_i].classes[c] == 0: continue
+
+            for j in range(i+1, len(sorted_indices)):
+                index_j = sorted_indices[j]
+
+                if bbox_iou(boxes[index_i], boxes[index_j]) >= nms_thresh:
+                    boxes[index_j].classes[c] = 0
+
+def render_boxes(img, boxes, labels, obj_thresh):
+    for box in boxes:
+        label_str = ""
+        label = -1
+
+        for i in range(len(labels)):
+            if box.classes[i] > obj_thresh:
+                label_str += labels[i]
+                label = i
+                print ("{}: {:.4f}%".format(labels[i], box.classes[i]*100))
+
+        if label >= 0:
+            cv2.rectangle(img, (box.xmin, box.ymin), (box.xmax, box.ymax), (0, 255, 3), 3)
+            cv2.putText(img, '{} {}'.format(label_str, box.get_score()), (box.xmax, box.ymin - 13), cv2.FONT_HERSHEY_SIMPLEX, 1e-3 * img.shape[0], (0, 255, 0), 2)
+
+    return img
+
+weights_path = "./bin/yolov3.weights"
+image_path   = "./test_data/img/street.jpg"
+
+net_h, net_w = 416, 416
+obj_thresh, nms_thresh = 0.5, 0.45
+anchors = [[116, 90, 156, 198, 373, 326], [30, 61, 62, 45, 59, 119], [10, 13, 16, 30, 33, 23]]
+labels = ["person", "bicycle", "car", "motorbike", "aeroplane", "bus", "train", "truck", 
+            "boat", "traffic light", "fire hydrant", "stop sign", "parking meter", "bench", 
+            "bird", "cat", "dog", "horse", "sheep", "cow", "elephant", "bear", "zebra", "giraffe", 
+            "backpack", "umbrella", "handbag", "tie", "suitcase", "frisbee", "skis", "snowboard", 
+            "sports ball", "kite", "baseball bat", "baseball glove", "skateboard", "surfboard", 
+            "tennis racket", "bottle", "wine glass", "cup", "fork", "knife", "spoon", "bowl", "banana", 
+            "apple", "sandwich", "orange", "broccoli", "carrot", "hot dog", "pizza", "donut", "cake", 
+            "chair", "sofa", "pottedplant", "bed", "diningtable", "toilet", "tvmonitor", "laptop", "mouse", 
+            "remote", "keyboard", "cell phone", "microwave", "oven", "toaster", "sink", "refrigerator", 
+            "book", "clock", "vase", "scissors", "teddy bear", "hair drier", "toothbrush"]
+
+yolov3 = YOLO9000()
+
+weight_loader = WeightsLoader(weights_path)
+weight_loader.load_weights(yolov3)
+
+img = cv2.imread(image_path)
+img_h, img_w = img.shape[:2]
+new_img = preprocess(img, net_h, net_w)
+
+yolos = yolov3.predict(new_img)
+boxes = []
+
+for i in range(len(yolos)):
+    boxes += decode_netout(yolos[i][0], anchors[i], obj_thresh, nms_thresh, net_h, net_w)
+
+rectify_yolo_boxes(boxes, img_h, img_w, net_h, net_w)    
+do_nms(boxes, nms_thresh)
+
+render_boxes(img, boxes, labels, obj_thresh)
+
+cv2.imwrite(image_path[:-4] + '_detected' + image_path[-4:], (img).astype('uint8')) 
