@@ -1,9 +1,11 @@
-import tensorflow as tf
-import numpy as np
+import os
+import wget
 from termcolor import colored
 from clint.textui import progress
-import requests
+
 import cv2
+import tensorflow as tf
+import numpy as np
 
 class YOLO9000Client(object):
 	def __init__(self):
@@ -33,12 +35,12 @@ class YOLO9000Client(object):
 		"""
 		
 		weights_url = "https://pjreddie.com/media/files/yolov3.weights"
-		config_url = "https://github.com/pjreddie/darknet/blob/master/cfg/yolov3.cfg"
+		config_url = "https://raw.githubusercontent.com/pjreddie/darknet/master/cfg/yolov3.cfg"
 
-		weights = self.download_file(weights_url, "yolov3.weights")
-		config = self.download_file(config_url, "yolov3.cfg")
+		wget.download(weights_url, os.getcwd() + "/yolov3.weights")
+		wget.download(config_url, os.getcwd() + "/yolov3.cfg")
 
-		print ("Weights and config file downloaded successfully!")
+		print ("\n\nWeights and config file downloaded successfully!")
 
 	def load_model(self, weights_path):
 		"""
@@ -60,6 +62,7 @@ class YOLO9000Client(object):
 		Each element in the array is for each input image.
 		"""
 		for frame in data:
+			pass
 
 class MaskRCNNClient(object):
 	def __init__(self, data):

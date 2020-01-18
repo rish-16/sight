@@ -1,8 +1,6 @@
 from sight import Sightseer
-from proc import DataAnnotator
+from zoo import YOLO9000Client
 
-da = DataAnnotator(['racoon'])
+yolo = YOLO9000Client()
+yolo.download_model()
 
-xmlpath = "./test_data/xml/"
-csvfile = "./test_data/csv/test.csv"
-da.xml_to_csv(xmlpath, csvfile)
