@@ -4,6 +4,7 @@ from tensorflow.keras.layers import Dense, LeakyReLU, Input, Conv2D, ZeroPadding
 from tensorflow.keras.models import Model
 import struct
 import cv2
+import matplotlib.pyplot as plt
 
 class WeightsLoader():
     def __init__(self, weights_path):
@@ -65,6 +66,9 @@ class WeightsLoader():
                     print ("No convolution #{}".format(i))
                 else:
                     pass
+
+        if verbose:
+            print ("Finished loading weights into model. Predicting on input data...")
     
     def reset(self):
         self.offset = 0
@@ -334,12 +338,21 @@ def render_boxes(img, boxes, labels, obj_thresh):
 
         if label >= 0:
             cv2.rectangle(img, (box.xmin, box.ymin), (box.xmax, box.ymax), (0, 255, 3), 3)
-            cv2.putText(img, '{} {}'.format(label_str, box.get_score()), (box.xmax, box.ymin - 13), cv2.FONT_HERSHEY_SIMPLEX, 1e-3 * img.shape[0], (0, 255, 0), 2)
+            cv2.putText(img, '{} {:.3f}'.format(label_str, box.get_score()), (box.xmax, box.ymin - 13), cv2.FONT_HERSHEY_SIMPLEX, 1e-3 * img.shape[0], (0, 255, 0), 2)
 
     return img
 
+def write_img(image, image_path):
+    image_path = image_path.split('/')
+    img_name = image_path[-1]
+    img_name = img_name.split('.')
+    img_name = img_name[0] + "_detected." + img_name[1]
+    image_path = "/".join(image_path[:-1]) + "/" + img_name
+
+    cv2.imwrite(image_path, (image).astype('uint8'))
+
 weights_path = "./bin/yolov3.weights"
-image_path   = "./test_data/img/street.jpg"
+image_path   = "./test_data/img/street2.jpeg"
 
 net_h, net_w = 416, 416
 obj_thresh, nms_thresh = 0.5, 0.45
@@ -373,6 +386,8 @@ for i in range(len(yolos)):
 rectify_yolo_boxes(boxes, img_h, img_w, net_h, net_w)    
 non_maximum_suppresion(boxes, nms_thresh)
 
-render_boxes(img, boxes, labels, obj_thresh)
+bbox_img = render_boxes(img, boxes, labels, obj_thresh)
+plt.imshow(bbox_img)
+plt.show()
 
-cv2.imwrite(image_path[:-4] + '_detected' + image_path[-4:], (img).astype('uint8'))
+write_img(bbox_img, image_path)
