@@ -181,7 +181,7 @@ class YOLO9000Client(object):
 
 	def bbox_iou(self, box1, box2):
 		"""
-		Finds IOU between `n` bounding boxes before non maximum suppression
+		Finds IOU between all bounding boxes before non maximum suppression process
 		"""
 		int_w = self.interval_overlap([box1.xmin, box1.xmax], [box2.xmin, box2.xmax])
 		int_h = self.interval_overlap([box1.ymin, box1.ymax], [box2.ymin, box2.ymax])
