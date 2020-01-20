@@ -158,7 +158,6 @@ class YOLO9000Client(object):
 		new_image = np.ones((self.net_h, self.net_w, 3)) * 0.5
 		new_image[int((self.net_h-new_h)//2):int((self.net_h+new_h)//2), int((self.net_w-new_w)//2):int((self.net_w+new_w)//2), :] = resized
 		new_image = np.expand_dims(new_image, 0)
-		print (new_image.shape)
 
 		return new_image
 

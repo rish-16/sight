@@ -137,6 +137,9 @@ class Sightseer(object):
 			cv2.rectangle(image, (xmin, ymin), (xmax, ymax), (r, g, b), 3)
 			cv2.putText(image, '{}: {:.2f}'.format(label, confidence), (xmax, ymin-13), cv2.FONT_HERSHEY_SIMPLEX, 1e-3 * image.shape[0], (r, g, b), 2)
 
+		plt.imshow(image)
+		plt.show()
+
 		if save_image:
 			new_filepath = self.get_final_filepath(self.filepath)
 			plt.savefig(new_filepath)
