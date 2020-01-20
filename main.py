@@ -1,12 +1,18 @@
 from sight import Sightseer
 from zoo import YOLO9000Client
+from pprint import pprint
+import matplotlib.pyplot as plt
 
+# downloading and configuring weights and hyperparams
 yolo = YOLO9000Client()
-yolo.load_model() # downloading and configuring weights into model
+yolo.load_model(verbose=False)
 
-ss = Sightseer()
-img = ss.load_image("./test_data/img/street.jpg")
-new_img = yolo.preprocess(img)
+# preprocessing the image to fit YOLO9000 specs
+ss = Sightseer("./test_data/img/street2.jpeg")
+image = ss.load_image()
+new_image = yolo.preprocess(image)
 
-preds = yolo.get_predictions(new_img)
-ss.render_image(new_img, preds) # renders image on pyplot
+# Getting bounding boxes and displaying image
+preds, pred_image = yolo.get_predictions(new_image, return_image=True)
+pprint (preds)
+ss.render_image(pred_image)

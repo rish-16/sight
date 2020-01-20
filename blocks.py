@@ -1,16 +1,16 @@
 import struct
 import numpy as np
 import tensorflow as tf
-from tensorflow.keras.layers import conv2D, ZeroPadding2D, BatchNormalization, add	
+from tensorflow.keras.layers import Conv2D, ZeroPadding2D, BatchNormalization, LeakyReLU, add	
 
 class BoundingBox(object):
-	def __init__(self, xmin, ymin, xmax, ymax, objness=None, classes=None):
+    def __init__(self, xmin, ymin, xmax, ymax, objectness=None, classes=None):
         self.xmin = xmin
         self.ymin = ymin
         self.xmax = xmax
         self.ymax = ymax
 
-        self.objness = objness
+        self.objectness = objectness
         self.classes = classes
 
         self.label = -1
@@ -27,14 +27,14 @@ class BoundingBox(object):
         return self.confidence		
 
 class SightLoader():
-	def __init__(self, weights_path):
-		"""
-		Weights loading framework for all Sight models
-		"""
-		with open(weights_path, 'rb') as wf:
-			major, = struct.unpack('i', wf.read(4))
-			minor, = struct.unpack('i', wf.read(4))
-			revision, = struct.unpack('i', wf.read(4))
+    def __init__(self, weights_path):
+        """
+        Weights loading framework for all Sight models
+        """
+        with open(weights_path, 'rb') as wf:
+            major, = struct.unpack('i', wf.read(4))
+            minor, = struct.unpack('i', wf.read(4))
+            revision, = struct.unpack('i', wf.read(4))
 
             if (major*10+ minor) >= 2 and major < 1000 and minor < 1000:
                 wf.read(8)
@@ -45,17 +45,18 @@ class SightLoader():
 
             binary = wf.read()
 
-		self.offset = 0
-		self.all_weights = np.frombuffer(binary, dtype="float32")
+        self.offset = 0
+        self.all_weights = np.frombuffer(binary, dtype="float32")
 
-	def read_bytes(self, chunk_size):
-		self.offset = self.offset + chunk_size
-		return self.all_weights[self.offset - chunk_size:self.offset]
+    def read_bytes(self, chunk_size):
+        self.offset = self.offset + chunk_size
+        return self.all_weights[self.offset - chunk_size:self.offset]
 
-	def load_weights(self, model, verbose=True):
-		for i in range(106): # standard darknet layer count
+    def load_weights(self, model, verbose=True):
+        for i in range(106): # standard darknet layer count
             try:
                 conv_layer = model.get_layer("conv_" + str(i))
+                
                 if verbose:
                     print ("Loading Convolution #{}".format(i))
 
@@ -86,15 +87,15 @@ class SightLoader():
 
             except ValueError:
                 if verbose:
-                    print ("No Convolution {}".format(i))
+                    print ("No Convolution #{}".format(i))
                 else:
                     pass
 
         if verbose:
             print ("Finished loading weights into model. Predicting on input data...")
 
-	def reset_offset(self):
-		self.offset = 0		
+    def reset_offset(self):
+        self.offset = 0		
 
 class ConvBlock():
 	def get_conv_block(inp, convs, skip=True):
