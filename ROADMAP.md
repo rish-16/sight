@@ -23,7 +23,6 @@ This document acts as a sort of to-do list. It contains all the present requirem
 - [x] Webcam footage
 - [x] Screen grab
 - [x] Preloaded video footage
-- [ ] Realtime streaming
 
 ### Proc
 
@@ -38,12 +37,13 @@ This document acts as a sort of to-do list. It contains all the present requirem
 
 **Models**
 
-- [ ] YOLO9000
+- [x] YOLO9000
 - [ ] Mask RCNN
 - [ ] Fast/Faster RCNN
 - [ ] TensorFlow Object Detection
 - [ ] TensorFlow Object Counting
 - [ ] Single Shot Detector
+- [ ] TensorFlow Object Counting
 
 **Add-ons** 
 
@@ -54,7 +54,6 @@ This document acts as a sort of to-do list. It contains all the present requirem
 
 - [ ] Google Cloud Platform support
 - [ ] Amazon Web Services support
-- [ ] PySpark for realtime streaming
 
 ---
 

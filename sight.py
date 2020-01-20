@@ -1,9 +1,14 @@
-import tensorflow as tf
-import numpy as np
-from PIL import ImageGrab
 import cv2
+import numpy as np
+import tensorflow as tf
+from PIL import ImageGrab
+import matplotlib.pyplot as plt
+from matplotlib.patches import Rectangle
 
 class Sightseer(object):
+	def __init__(self, filepath):
+		self.filepath = filepath
+
 	def render_grayscale(self, frame):
 		gray_frame = cv2.cvtColor(frame, cv2.COLOR_BGR2GRAY)
 		return gray_frame
@@ -66,8 +71,8 @@ class Sightseer(object):
 			frames = np.array(frames)
 			return frames
 
-	def load_source(self, filepath, return_data=True, set_gray=True, kill_key="q"):
-		vidcap = cv2.VideoCapture(filepath)
+	def load_source(self, return_data=True, set_gray=True, kill_key="q"):
+		vidcap = cv2.VideoCapture(self.filepath)
 		
 		frame_exists, frame = vidcap.read()
 		frames = []
@@ -91,6 +96,58 @@ class Sightseer(object):
 		if return_data:
 			frames = np.array(frames)
 			return frames
+
+	def load_image(self):
+		try:
+			img = cv2.imread(self.filepath)
+			return img
+		except:
+			raise FileExistsError ("File does not exist. You may want to check the filepath again.")
+
+	def get_final_filepath(self, image_path):
+		image_path = image_path.split('/')
+		img_name = image_path[-1]
+		img_name = img_name.split('.')
+		img_name = img_name[0] + "_detected." + img_name[1]
+		image_path = "/".join(image_path[:-1]) + "/" + img_name
+
+		return image_path	
+	
+	def render_image(self, image, boxes, save_image=True, random_coloring=True):
+		image = image.squeeze()
+		plt.imshow(image)
+
+		ax = plt.gca()
+		
+		for i in range(len(boxes)):
+			box = boxes[i]
 			
-	def stream(self, conn, port, buffer):
-		pass
+			label = box[0]
+			confidence = box[1]
+			coords = box[2]
+
+			ymin, xmin, ymax, xmax = coords['ymin'], coords['xmin'], coords['ymax'], coords['xmax']
+
+			if random_coloring:
+				r = np.random.randint(0, 255)
+				g = np.random.randint(0, 255)
+				b = np.random.randint(0, 255)
+			else:
+				r = 0
+				g = 255
+				b = 0			
+			
+			frame_color = "#" + hex(r << 16 | g << 8 | b)[2:]
+
+			width = xmax - xmin
+			height = ymax - ymin
+
+			rect = Rectangle((xmin, ymin), width, height, fill=False, color=frame_color)
+			ax.add_patch(rect)
+
+			label = '{}: {:.2f}'.format(label, confidence)
+			plt.text(xmin, ymin, label, color=frame_color)
+
+		if save_image:
+			new_filepath = self.get_final_filepath(self.filepath)
+			plt.savefig(new_filepath)

@@ -4,6 +4,7 @@ from tensorflow.keras.layers import Dense, LeakyReLU, Input, Conv2D, ZeroPadding
 from tensorflow.keras.models import Model
 import struct
 import cv2
+import matplotlib.pyplot as plt
 
 class WeightsLoader():
     def __init__(self, weights_path):
@@ -28,11 +29,12 @@ class WeightsLoader():
         self.offset = self.offset + size
         return self.all_weights[self.offset - size:self.offset]
 
-    def load_weights(self, model):
+    def load_weights(self, model, verbose=True):
         for i in range(106): # standard darknet layer count
             try:
                 conv_layer = model.get_layer("conv_" + str(i))
-                print ("Loading weights for convolution #{}".format(i))
+                if verbose:
+                    print ("Loading weights for convolution #{}".format(i))
 
                 if i not in [81, 93, 105]:
                     norm_layer = model.get_layer("bnorm_" + str(i))
@@ -60,7 +62,13 @@ class WeightsLoader():
                     conv_layer.set_weights([kernel])
 
             except ValueError:
-                print ("No convolution #{}".format(i))
+                if verbose:
+                    print ("No convolution #{}".format(i))
+                else:
+                    pass
+
+        if verbose:
+            print ("Finished loading weights into model. Predicting on input data...")
     
     def reset(self):
         self.offset = 0
@@ -215,20 +223,30 @@ def YOLO9000():
     model = Model(inp_img, [yolo_82, yolo_94, yolo_106])    
     return model
 
-def preprocess(img, netw, neth):
-    newh, neww = img.shape[:2]
+def preprocess(img, net_w, net_h):
+    new_h, new_w, _ = img.shape
 
-    if float(netw)/neww < float(neth)/newh:
-        newh = (newh * netw) / neww
-        neww = netw
+    # determine the new size of the image
+    # if (float(net_w)/new_w) < (float(net_h)/new_h):
+    #     new_h = (new_h * net_w)/new_w
+    #     new_w = net_w
+    # else:
+    #     new_w = (new_w * net_h)/new_h
+    #     new_h = net_h
+
+    if (float(net_w)/new_w) < (float(net_h)/new_h):
+        new_h = (new_h * net_w)//new_w
+        new_w = net_w
     else:
-        neww = (neww * neth) / newh
-        newh = neth
+        new_w = (new_w * net_h)//new_h
+        new_h = net_h        
 
-    resized = cv2.resize(img[:,:,::-1]/255, (int(neww), int(newh)))
+    # resize the image to the new size
+    resized = cv2.resize(img[:, :, ::-1]/255., (int(new_w), int(new_h)))
 
-    new_img = np.ones([neth, netw, 3]) * 0.5
-    new_img[int(neth - newh)//2: int((neth + newh)//2), int((netw - neww)//2):int((netw + neww)//2), :] = resized
+    # embed the image into the standard letter box
+    new_img = np.ones((net_h, net_w, 3)) * 0.5
+    new_img[int((net_h-new_h)//2):int((net_h+new_h)//2), int((net_w-new_w)//2):int((net_w+new_w)//2), :] = resized
     new_img = np.expand_dims(new_img, 0)
 
     return new_img
@@ -271,7 +289,7 @@ def decode_netout(netout, anchors, obj_thresh, nms_thresh, neth, netw):
     return boxes
 
 def rectify_yolo_boxes(boxes, img_h, img_w, neth, netw):
-    if (float(net_w)/image_w) < (float(net_h)/image_h):
+    if (float(net_w)/img_w) < (float(net_h)/img_h):
         neww = netw
         newh = (img_h * netw)/ img_w
     else:
@@ -282,12 +300,12 @@ def rectify_yolo_boxes(boxes, img_h, img_w, neth, netw):
         x_offset, x_scale = (netw - neww)/2./netw, float(neww)/netw
         y_offset, y_scale = (neth - newh)/2./neth, float(newh)/neth
         
-        boxes[i].xmin = int((boxes[i].xmin - x_offset) / x_scale * image_w)
-        boxes[i].xmax = int((boxes[i].xmax - x_offset) / x_scale * image_w)
-        boxes[i].ymin = int((boxes[i].ymin - y_offset) / y_scale * image_h)
-        boxes[i].ymax = int((boxes[i].ymax - y_offset) / y_scale * image_h)
+        boxes[i].xmin = int((boxes[i].xmin - x_offset) / x_scale * img_w)
+        boxes[i].xmax = int((boxes[i].xmax - x_offset) / x_scale * img_w)
+        boxes[i].ymin = int((boxes[i].ymin - y_offset) / y_scale * img_h)
+        boxes[i].ymax = int((boxes[i].ymax - y_offset) / y_scale * img_h)
                 
-def do_nms(boxes, nms_thresh):
+def non_maximum_suppresion(boxes, nms_thresh):
     if len(boxes) > 0:
         nb_class = len(boxes[0].classes)
     else:
@@ -320,12 +338,21 @@ def render_boxes(img, boxes, labels, obj_thresh):
 
         if label >= 0:
             cv2.rectangle(img, (box.xmin, box.ymin), (box.xmax, box.ymax), (0, 255, 3), 3)
-            cv2.putText(img, '{} {}'.format(label_str, box.get_score()), (box.xmax, box.ymin - 13), cv2.FONT_HERSHEY_SIMPLEX, 1e-3 * img.shape[0], (0, 255, 0), 2)
+            cv2.putText(img, '{} {:.3f}'.format(label_str, box.get_score()), (box.xmax, box.ymin - 13), cv2.FONT_HERSHEY_SIMPLEX, 1e-3 * img.shape[0], (0, 255, 0), 2)
 
     return img
 
+def write_img(image, image_path):
+    image_path = image_path.split('/')
+    img_name = image_path[-1]
+    img_name = img_name.split('.')
+    img_name = img_name[0] + "_detected." + img_name[1]
+    image_path = "/".join(image_path[:-1]) + "/" + img_name
+
+    cv2.imwrite(image_path, (image).astype('uint8'))
+
 weights_path = "./bin/yolov3.weights"
-image_path   = "./test_data/img/street.jpg"
+image_path   = "./test_data/img/fruits.jpg"
 
 net_h, net_w = 416, 416
 obj_thresh, nms_thresh = 0.5, 0.45
@@ -357,8 +384,10 @@ for i in range(len(yolos)):
     boxes += decode_netout(yolos[i][0], anchors[i], obj_thresh, nms_thresh, net_h, net_w)
 
 rectify_yolo_boxes(boxes, img_h, img_w, net_h, net_w)    
-do_nms(boxes, nms_thresh)
+non_maximum_suppresion(boxes, nms_thresh)
 
-render_boxes(img, boxes, labels, obj_thresh)
+bbox_img = render_boxes(img, boxes, labels, obj_thresh)
+plt.imshow(bbox_img)
+plt.show()
 
-cv2.imwrite(image_path[:-4] + '_detected' + image_path[-4:], (img).astype('uint8')) 
+write_img(bbox_img, image_path)
