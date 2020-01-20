@@ -114,7 +114,6 @@ class Sightseer(object):
 		return image_path	
 	
 	def render_image(self, image, boxes, save_image=True, random_coloring=True):
-		print (image.shape)
 		image = image.squeeze()
 		
 		for i in range(len(boxes)):
