@@ -2,6 +2,7 @@ import os
 import wget
 import struct
 import shutil
+import logging
 
 import cv2
 import numpy as np
@@ -10,6 +11,11 @@ from tensorflow.keras.layers import Input, UpSampling2D, concatenate
 from tensorflow.keras.models import Model
 
 from blocks import ConvBlock, BoundingBox, SightLoader
+
+# disabling warnings and logging
+os.environ['TF_CPP_MIN_LOG_LEVEL'] = '3'
+tf.autograph.set_verbosity(tf.compat.v1.logging.ERROR)
+logging.disable(logging.WARNING)
 
 class YOLO9000Client(object):
 	def __init__(self, nms_threshold=0.45, obj_threshold=0.5, net_h=416, net_w=416, anchors=[[116, 90, 156, 198, 373, 326], [30, 61, 62, 45, 59, 119], [10, 13, 16, 30, 33, 23]]):
@@ -152,6 +158,7 @@ class YOLO9000Client(object):
 		new_image = np.ones((self.net_h, self.net_w, 3)) * 0.5
 		new_image[int((self.net_h-new_h)//2):int((self.net_h+new_h)//2), int((self.net_w-new_w)//2):int((self.net_w+new_w)//2), :] = resized
 		new_image = np.expand_dims(new_image, 0)
+		print (new_image.shape)
 
 		return new_image
 
@@ -257,7 +264,9 @@ class YOLO9000Client(object):
 			bboxes[i].ymin = int((bboxes[i].ymin - y_offset) / y_scale * image_h)
 			bboxes[i].ymax = int((bboxes[i].ymax - y_offset) / y_scale * image_h)
 
-	def decode_boxes(self, image, boxes, random_coloring=True):
+		return bboxes
+
+	def decode_boxes(self, boxes, random_coloring=True):
 		final_boxes = []
 		for box in boxes:
 			label_str = ""
@@ -270,20 +279,7 @@ class YOLO9000Client(object):
 
 					final_boxes.append([self.all_labels[i], box.classes[i]*100, {'xmin': box.xmin, 'ymin': box.ymin, 'xmax': box.xmax, 'ymax': box.ymax}])
 
-					# bounding box and text color picker
-					if random_coloring:
-						r = np.random.randint(0, 255)
-						g = np.random.randint(0, 255)
-						b = np.random.randint(0, 255)
-					else:
-						r = 0
-						g = 255
-						b = 0
-						
-					cv2.rectangle(image, (box.xmin, box.ymin), (box.xmax, box.ymax), (r, g, b), 3)
-					cv2.putText(image, '{}: {:.3f}'.format(label_str, box.classes[i]*100), (box.xmax, box.ymin-13), cv2.FONT_HERSHEY_SIMPLEX, 1e-3 * image.shape[0], (r, g, b), 2)											
-
-		return final_boxes, image
+		return final_boxes
 
 	def load_model(self, default_path="./bin/yolov3.weights", verbose=True):
 		"""
@@ -295,7 +291,7 @@ class YOLO9000Client(object):
 		self.yolo_model = self.load_architecture() # loading weights into model
 		loader.load_weights(self.yolo_model, verbose)
 
-	def get_predictions(self, image, render_image=True):
+	def get_predictions(self, image):
 		"""
 		Returns a list of BoundingBox metadata (class label, confidence score, coordinates)
 		and the edited image with bounding boxes and their corresponding text labels
@@ -311,13 +307,9 @@ class YOLO9000Client(object):
 		for i in range(len(preds)):
 			boxes += self.decode_output(preds[i][0], self.anchors[i])
 
-		self.rectify_bboxes(boxes, image_h, image_w)
+		boxes = self.rectify_bboxes(boxes, image_h, image_w)
 		self.non_maximum_suppression(boxes)
 
-		bbox_list, new_image = self.decode_boxes(image, boxes)
-		new_image = new_image.squeeze()
-		
-		if render_image:
-			return bbox_list, new_image
-		else:
-			return bbox_list
+		bbox_list = self.decode_boxes(boxes)
+
+		return bbox_list

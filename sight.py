@@ -3,6 +3,7 @@ import numpy as np
 import tensorflow as tf
 from PIL import ImageGrab
 import matplotlib.pyplot as plt
+from matplotlib.patches import Rectangle
 
 class Sightseer(object):
 	def __init__(self, filepath):
@@ -103,49 +104,40 @@ class Sightseer(object):
 		except:
 			raise FileExistsError ("File does not exist. You may want to check the filepath again.")
 
-	def write_img(self, image, image_path):
+	def get_final_filepath(self, image_path):
 		image_path = image_path.split('/')
 		img_name = image_path[-1]
 		img_name = img_name.split('.')
 		img_name = img_name[0] + "_detected." + img_name[1]
 		image_path = "/".join(image_path[:-1]) + "/" + img_name
 
-		print ('Saved edited image at {}'.format(image_path))
-
-		cv2.imwrite(image_path, (image).astype('uint8'))	
+		return image_path	
 	
-	# def render_image(self, image, boxes, save_img=True, random_coloring=True):
-	# 	for box in boxes:
-	# 		label_str = box[0]
-	# 		confidence = box[1]
-	# 		coords = box[2]
-
-	# 		if random_coloring:
-	# 			r = np.random.randint(0, 255)
-	# 			g = np.random.randint(0, 255)
-	# 			b = np.random.randint(0, 255)
-	# 		else:
-	# 			r = 0
-	# 			g = 255
-	# 			b = 0
-
-	# 		cv2.rectangle(image, (coords['xmin'], coords['ymin']), (coords['xmax'], coords['ymax']), (r, g, b), 3)
-	# 		cv2.putText(image, '{}: {:.3f}'.format(label_str, confidence), (coords['xmax'], coords['ymin']-13), cv2.FONT_HERSHEY_SIMPLEX, 1e-3 * image.shape[0], (r, g, b), 2)
-
-	# 	image = np.squeeze(image)
-	# 	image = image.astype('uint8')
-	# 	image = image / 255
+	def render_image(self, image, boxes, save_image=True, random_coloring=True):
+		print (image.shape)
+		image = image.squeeze()
 		
-	# 	print (image.shape)
+		for i in range(len(boxes)):
+			box = boxes[i]
+			
+			label = box[0]
+			confidence = box[1]
+			coords = box[2]
 
-	# 	if save_img:
-	# 		self.write_img(image, self.filepath)
+			ymin, xmin, ymax, xmax = coords['ymin'], coords['xmin'], coords['ymax'], coords['xmax']
 
-	# 	plt.imshow(image)
-	# 	plt.show()
-	
-	# 	return image
+			if random_coloring:
+				r = np.random.randint(0, 255)
+				g = np.random.randint(0, 255)
+				b = np.random.randint(0, 255)
+			else:
+				r = 0
+				g = 255
+				b = 0			
 
-	def render_image(self, img):
-		plt.imshow(img)
-		plt.show()
+			cv2.rectangle(image, (xmin, ymin), (xmax, ymax), (r, g, b), 3)
+			cv2.putText(image, '{}: {:.2f}'.format(label, confidence), (xmax, ymin-13), cv2.FONT_HERSHEY_SIMPLEX, 1e-3 * image.shape[0], (r, g, b), 2)
+
+		if save_image:
+			new_filepath = self.get_final_filepath(self.filepath)
+			plt.savefig(new_filepath)
