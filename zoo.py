@@ -19,6 +19,11 @@ logging.disable(logging.WARNING)
 
 class YOLO9000Client(object):
 	def __init__(self, nms_threshold=0.45, obj_threshold=0.5, net_h=416, net_w=416, anchors=[[116, 90, 156, 198, 373, 326], [30, 61, 62, 45, 59, 119], [10, 13, 16, 30, 33, 23]]):
+		self.nms_threshold = nms_threshold
+		self.obj_threshold = obj_threshold
+		self.net_h, self.net_w = net_h, net_w
+		self.anchors = anchors
+		self.yolo_model = None
 		self.all_labels = ["person", "bicycle", "car", "motorbike", "aeroplane", "bus", "train", "truck",
 						"boat", "traffic light", "fire hydrant", "stop sign", "parking meter", "bench",
 						"bird", "cat", "dog", "horse", "sheep", "cow", "elephant", "bear", "zebra", "giraffe",
@@ -29,11 +34,6 @@ class YOLO9000Client(object):
 						"chair", "sofa", "pottedplant", "bed", "diningtable", "toilet", "tvmonitor", "laptop", "mouse",
 						"remote", "keyboard", "cell phone", "microwave", "oven", "toaster", "sink", "refrigerator",
 						"book", "clock", "vase", "scissors", "teddy bear", "hair drier", "toothbrush"]
-		self.nms_threshold = nms_threshold
-		self.obj_threshold = obj_threshold
-		self.net_h, self.net_w = net_h, net_w
-		self.anchors = anchors
-		self.yolo_model = None
 
 	def download_weights(self):
 		"""
@@ -144,6 +144,9 @@ class YOLO9000Client(object):
 		return 1 / (1 + np.exp(-z))
 
 	def preprocess(self, image):
+		"""
+		Resizes image to appropriate dimensions
+		"""
 		new_h, new_w, _ = image.shape
 
 		if (float(self.net_w)/new_w) < (float(self.net_h)/new_h):
@@ -177,6 +180,9 @@ class YOLO9000Client(object):
 				return min(x2, x4) - x3	
 
 	def bbox_iou(self, box1, box2):
+		"""
+		Finds IOU between `n` bounding boxes before non maximum suppression
+		"""
 		int_w = self.interval_overlap([box1.xmin, box1.xmax], [box2.xmin, box2.xmax])
 		int_h = self.interval_overlap([box1.ymin, box1.ymax], [box2.ymin, box2.ymax])
 

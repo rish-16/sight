@@ -115,6 +115,9 @@ class Sightseer(object):
 	
 	def render_image(self, image, boxes, save_image=True, random_coloring=True):
 		image = image.squeeze()
+		plt.imshow(image)
+
+		ax = plt.gca()
 		
 		for i in range(len(boxes)):
 			box = boxes[i]
@@ -133,12 +136,17 @@ class Sightseer(object):
 				r = 0
 				g = 255
 				b = 0			
+			
+			frame_color = "#" + hex(r << 16 | g << 8 | b)[2:]
 
-			cv2.rectangle(image, (xmin, ymin), (xmax, ymax), (r, g, b), 3)
-			cv2.putText(image, '{}: {:.2f}'.format(label, confidence), (xmax, ymin-13), cv2.FONT_HERSHEY_SIMPLEX, 1e-3 * image.shape[0], (r, g, b), 2)
+			width = xmax - xmin
+			height = ymax - ymin
 
-		plt.imshow(image)
-		plt.show()
+			rect = Rectangle((xmin, ymin), width, height, fill=False, color=frame_color)
+			ax.add_patch(rect)
+
+			label = '{}: {:.2f}'.format(label, confidence)
+			plt.text(xmin, ymin, label, color=frame_color)
 
 		if save_image:
 			new_filepath = self.get_final_filepath(self.filepath)

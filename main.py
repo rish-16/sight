@@ -14,4 +14,4 @@ new_image = yolo.preprocess(image)
 # Getting bounding boxes and displaying image
 preds = yolo.get_predictions(new_image)
 pprint (preds)
-ss.render_image(new_image, preds)
+ss.render_image(new_image, preds) # experimental display method
