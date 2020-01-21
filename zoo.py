@@ -215,8 +215,6 @@ class YOLO9000Client(object):
 					if self.bbox_iou(bboxes[index_i], bboxes[index_j]) >= self.nms_threshold:
 						bboxes[index_j].classes[c] = 0
 
-		return bboxes
-
 	def decode_output(self, preds, anchors):
 		gridh, gridw = preds.shape[:2]
 		nb_box = 3
@@ -273,7 +271,7 @@ class YOLO9000Client(object):
 
 		return bboxes
 
-	def decode_boxes(self, boxes):
+	def decode_boxes(self, boxes, random_coloring=True):
 		final_boxes = []
 		for box in boxes:
 			label_str = ""
@@ -315,8 +313,8 @@ class YOLO9000Client(object):
 			boxes += self.decode_output(preds[i][0], self.anchors[i])
 
 		boxes = self.rectify_bboxes(boxes, image_h, image_w)
-		boxes = self.non_maximum_suppression(boxes)
+		self.non_maximum_suppression(boxes)
 
-		box_list = self.decode_boxes(boxes)
+		bbox_list = self.decode_boxes(boxes)
 
-		return box_list
+		return bbox_list

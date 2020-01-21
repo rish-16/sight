@@ -1,10 +1,4 @@
 /bin/yolov3.weights
 /bin/yolov3.cfg
-<<<<<<< HEAD
-__pycache__
-/darknet.py
-/.vscode
-=======
 /__pycache__
 /darknet.py
->>>>>>> 27047cef0da9c1b00e28c4b6b79ce6b29616eb3d

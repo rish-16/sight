@@ -7,12 +7,11 @@ yolo = YOLO9000Client()
 yolo.load_model()
 
 # preprocessing image to fit YOLO9000 specs
-ss = Sightseer("./test_data/img/street2.jpeg")
+ss = Sightseer("./test_data/img/fruits.jpg")
 image = ss.load_image()
 new_image = yolo.preprocess(image)
 
 # Getting bounding boxes and displaying image
 preds = yolo.get_predictions(new_image)
-print (new_image.shape)
 pprint (preds)
-ss.render_image(new_image, preds)
+ss.render_image(new_image, preds) # experimental display method

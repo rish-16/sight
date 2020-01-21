@@ -1,7 +1,6 @@
 import cv2
 import numpy as np
 import tensorflow as tf
-from tensorflow.keras.preprocessing.image import load_img, img_to_array
 from PIL import ImageGrab
 import matplotlib.pyplot as plt
 from matplotlib.patches import Rectangle
@@ -114,8 +113,12 @@ class Sightseer(object):
 
 		return image_path	
 	
-	def render_image(self, original_image, boxes, save_image=True, random_coloring=True):
-		original_image = original_image.squeeze()
+	def render_image(self, image, boxes, save_image=True, random_coloring=True):
+		image = image.squeeze()
+		plt.imshow(image)
+
+		ax = plt.gca()
+		
 		for i in range(len(boxes)):
 			box = boxes[i]
 			
@@ -134,15 +137,16 @@ class Sightseer(object):
 				g = 255
 				b = 0			
 			
-			cv2.rectangle(original_image, (xmin, ymin), (xmax, ymax), (r, g, b), 3)
-			cv2.putText(original_image, label + ': ' + str(confidence), 
-						(xmin, ymin - 13), 
-						cv2.FONT_HERSHEY_SIMPLEX, 
-						1e-3 * original_image.shape[0], 
-						(r, g, b), 2)	
+			frame_color = "#" + hex(r << 16 | g << 8 | b)[2:]
 
-		plt.imshow(original_image)
-		plt.show()
+			width = xmax - xmin
+			height = ymax - ymin
+
+			rect = Rectangle((xmin, ymin), width, height, fill=False, color=frame_color)
+			ax.add_patch(rect)
+
+			label = '{}: {:.2f}'.format(label, confidence)
+			plt.text(xmin, ymin, label, color=frame_color)
 
 		if save_image:
 			new_filepath = self.get_final_filepath(self.filepath)

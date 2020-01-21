@@ -352,7 +352,7 @@ def write_img(image, image_path):
     cv2.imwrite(image_path, (image).astype('uint8'))
 
 weights_path = "./bin/yolov3.weights"
-image_path   = "./test_data/img/street.jpg"
+image_path   = "./test_data/img/fruits.jpg"
 
 net_h, net_w = 416, 416
 obj_thresh, nms_thresh = 0.5, 0.45
