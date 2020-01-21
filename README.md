@@ -11,14 +11,14 @@
 </p>
 
 <h3 align="center">
-<p>State-of-the-art Computer Vision and Object Detection for TensorFlow 1.14.</p>
+<p>State-of-the-art Computer Vision and Object Detection for TensorFlow 1.15.</p>
 </h3>
 
-*Sight* provides state-of-the-art general-purpose architectures (YOLO9000, MaskRCNN, Fast/Faster RCNN, SSD...) for Computer Vision and Object Detection tasks with 30+ pretrained models written in TensorFlow 1.14.
+*Sight* provides state-of-the-art general-purpose architectures (YOLO9000, MaskRCNN, Fast/Faster RCNN, SSD...) for Computer Vision and Object Detection tasks with 30+ pretrained models written in TensorFlow 1.15.
 
 ## Installation
 
-`sight` is written in Python 3.5+ and TensorFlow 1.14. 
+`sight` is written in Python 3.5+ and TensorFlow 1.15. 
 
 Ideally, `sight` should be installed in a [virtual environments](https://docs.python.org/3/library/venv.html). If you're unfamiliar with Python virtual environments, check out this [tutorial](https://packaging.python.org/guides/installing-using-pip-and-virtual-environments/) on getting started.
 
@@ -34,7 +34,7 @@ pip install sight
 
 ### From Source
 
-Again, to install from source, you need TensorFlow 1.14 and above running in a virtual environment. You can install the package by cloning the repo and installing the dependencies:
+Again, to install from source, you need TensorFlow 1.15 and above running in a virtual environment. You can install the package by cloning the repo and installing the dependencies:
 
 ```bash
 git clone https://github.com/rish-16/sight

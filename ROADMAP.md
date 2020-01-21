@@ -41,6 +41,7 @@ This document acts as a sort of to-do list. It contains all the present requirem
 - [ ] Mask RCNN
 - [ ] Fast/Faster RCNN
 - [ ] TensorFlow Object Detection
+- [ ] TensorFlow Object Counting
 - [ ] Single Shot Detector
 - [ ] TensorFlow Object Counting
 
