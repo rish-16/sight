@@ -269,8 +269,7 @@ class YOLOv3Client(object):
 			bboxes[i].ymin = int((bboxes[i].ymin - y_offset) / y_scale * image_h)
 			bboxes[i].ymax = int((bboxes[i].ymax - y_offset) / y_scale * image_h)
 
-	def render_boxes(self, image, boxes):
-
+	def render_boxes(self, image, boxes, verbose=True):
 		final_boxes = []
 
 		for box in boxes:
@@ -281,7 +280,8 @@ class YOLOv3Client(object):
 				if box.classes[i] > self.obj_threshold:
 					label_str += self.all_labels[i]
 					label = i
-					print ("{}: {:.4f}%".format(self.all_labels[i], box.classes[i]*100))
+					if verbose:
+						print ("{}: {:.4f}%".format(self.all_labels[i], box.classes[i]*100))
 
 					final_boxes.append([label_str,
 										box.classes[i] * 100,
@@ -293,11 +293,7 @@ class YOLOv3Client(object):
 										}
 										])
 
-			if label >= 0:
-				cv2.rectangle(image, (box.xmin, box.ymin), (box.xmax, box.ymax), (0, 255, 3), 3)
-				cv2.putText(image, '{} {:.3f}'.format(label_str, box.get_confidence()), (box.xmax, box.ymin - 13), cv2.FONT_HERSHEY_SIMPLEX, 1e-3 * image.shape[0], (0, 255, 0), 2)
-
-		return  final_boxes, image
+		return  final_boxes
 
 	def load_model(self, default_path="./bin/yolov3.weights", verbose=True):
 		"""
@@ -328,6 +324,6 @@ class YOLOv3Client(object):
 		self.rectify_bboxes(boxes, image_h, image_w)
 		self.non_maximum_suppression(boxes)
 
-		box_list, new_image = self.render_boxes(image, boxes)
+		box_list = self.render_boxes(image, boxes)
 
-		return box_list, new_image
+		return box_list
