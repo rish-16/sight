@@ -1,9 +1,9 @@
 from sight import Sightseer
-from zoo import YOLO9000Client
+from zoo import YOLOv3Client
 import matplotlib.pyplot as plt
 
 # downloading and configuring weights and hyperparams
-yolo = YOLO9000Client()
+yolo = YOLOv3Client()
 yolo.load_model()
 
 # preprocessing image to fit YOLO9000 specs

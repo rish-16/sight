@@ -17,7 +17,7 @@ os.environ['TF_CPP_MIN_LOG_LEVEL'] = '3'
 tf.autograph.set_verbosity(tf.compat.v1.logging.ERROR)
 logging.disable(logging.WARNING)
 
-class YOLO9000Client(object):
+class YOLOv3Client(object):
 	def __init__(self, nms_threshold=0.45, obj_threshold=0.5, net_h=416, net_w=416, anchors=[[116, 90, 156, 198, 373, 326], [30, 61, 62, 45, 59, 119], [10, 13, 16, 30, 33, 23]]):
 		self.nms_threshold = nms_threshold
 		self.obj_threshold = obj_threshold
@@ -42,7 +42,7 @@ class YOLO9000Client(object):
 		"""
 
 		if os.path.exists("./bin/yolov3.weights") and os.path.exists("./bin/yolov3.cfg"):
-			print ("Weights and model config already exist. Proceeding to load YOLO9000Client...")
+			print ("Weights and model config already exist. Proceeding to load YOLOv3Client...")
 		else:
 			print ("Downloading weights and model config. This may may take a moment...")
 			weights_url = "https://pjreddie.com/media/files/yolov3.weights"
@@ -317,7 +317,7 @@ class YOLO9000Client(object):
 		image_h, image_w = image.shape[:2]
 
 		if self.yolo_model == None:
-			raise ValueError ("YOLO9000 weights needs to be downloaded and configured into the model before use. You can use the `load_model()` method to do so.")
+			raise ValueError ("YOLOv3 weights needs to be downloaded and configured into the model before use. You can use the `load_model()` method to do so.")
 
 		preds = self.yolo_model.predict(image)
 		boxes = []
