@@ -252,6 +252,8 @@ class YOLOv3Client(object):
 
 				boxes.append(box)
 
+		return boxes
+
 	def rectify_bboxes(self, bboxes, image_h, image_w):
 		if (float(self.net_w)/image_w) < (float(self.net_h)/image_h):
 			new_w = self.net_w
@@ -269,19 +271,22 @@ class YOLOv3Client(object):
 			bboxes[i].ymin = int((bboxes[i].ymin - y_offset) / y_scale * image_h)
 			bboxes[i].ymax = int((bboxes[i].ymax - y_offset) / y_scale * image_h)
 
-	def render_boxes(self, image, boxes, verbose=True):
+		return bboxes
+
+	def get_bboxes(self, image, boxes, verbose=True):
 		final_boxes = []
 
 		for box in boxes:
 			label_str = ""
 			label = -1
 
-			for i in range(len(labels)):
+			for i in range(len(self.all_labels)):
 				if box.classes[i] > self.obj_threshold:
 					label_str += self.all_labels[i]
 					label = i
+					
 					if verbose:
-						print ("{}: {:.4f}%".format(self.all_labels[i], box.classes[i]*100))
+						print ("{}: {:.3f}%".format(self.all_labels[i], box.classes[i]*100))
 
 					final_boxes.append([label_str,
 										box.classes[i] * 100,
@@ -294,6 +299,24 @@ class YOLOv3Client(object):
 										])
 
 		return  final_boxes
+
+	def render_image(self, image, box_list, random_coloring=True):
+		for box in box_list:
+			label = box[0]
+			confidence = box[1]
+			coords = box[2]
+
+			xmin, ymin, xmax, ymax = coords['xmin'], coords['ymin'], coords['xmax'], coords['ymax']
+
+			if random_coloring:
+				r, g, b = np.random.randint(0, 255), np.random.randint(0, 255), np.random.randint(0, 255)
+			else:
+				r, g, b = 0, 255, 0
+
+			cv2.rectangle(image, (xmin, ymin), (xmax, ymax), (r, g, b), 1)
+			cv2.putText(image, '{} {:.3f}'.format(label, confidence), (xmax, ymin - 13), cv2.FONT_HERSHEY_SIMPLEX, 1e-3 * image.shape[0], (r, g, b), 2)
+
+		return image
 
 	def load_model(self, default_path="./bin/yolov3.weights", verbose=True):
 		"""
@@ -321,9 +344,12 @@ class YOLOv3Client(object):
 		for i in range(len(preds)):
 			boxes += self.decode_output(preds[i][0], self.anchors[i])
 
-		self.rectify_bboxes(boxes, image_h, image_w)
-		self.non_maximum_suppression(boxes)
+		boxes = self.rectify_bboxes(boxes, image_h, image_w)
+		boxes = self.non_maximum_suppression(boxes)
 
-		box_list = self.render_boxes(image, boxes)
+		box_list = self.get_bboxes(image, boxes)
+		new_image = self.render_image(image, box_list)
+		new_image = new_image.squeeze()
+		print (new_image.shape)
 
-		return box_list
+		return box_list, new_image

@@ -12,5 +12,7 @@ image = ss.load_image()
 new_image = yolo.preprocess(image)
 
 # Getting bounding boxes and displaying image
-preds = yolo.get_predictions(new_image)
-ss.render_image(preds)
+preds, det_image = yolo.get_predictions(new_image)
+plt.imshow(det_image)
+plt.show()
+plt.savefig("./test_data/img/street2_detected.jpeg")
