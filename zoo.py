@@ -19,6 +19,22 @@ logging.disable(logging.WARNING)
 
 class YOLOv3Client(object):
 	def __init__(self, nms_threshold=0.45, obj_threshold=0.5, net_h=416, net_w=416, anchors=[[116, 90, 156, 198, 373, 326], [30, 61, 62, 45, 59, 119], [10, 13, 16, 30, 33, 23]]):
+		"""
+		Params:
+		-------
+
+		- nsm_threshold (float): Non Maximum Suppression threshold for selecting bounding boxes ina region
+			default: 0.45
+			min: 0
+			max: 1
+		
+		- obj_threshold (float): 
+			default: 0.5
+			min: 0
+			max: 1
+
+		- 
+		"""
 		self.nms_threshold = nms_threshold
 		self.obj_threshold = obj_threshold
 		self.net_h, self.net_w = net_h, net_w
@@ -219,7 +235,7 @@ class YOLOv3Client(object):
 
 		return boxes
 
-	def decode_output(self, preds, anchors):
+	def decode_preds(self, preds, anchors):
 		gridh, gridw = preds.shape[:2]
 		nb_box = 3
 		preds = preds.reshape([gridh, gridw, nb_box, -1])
@@ -275,7 +291,7 @@ class YOLOv3Client(object):
 
 		return boxes
 
-	def get_boxes(self, image, boxes, verbose=True):
+	def get_boxes(self, image, boxes, verbose=True, random_coloring=True):
 		final_boxes = []
 
 		for box in boxes:
@@ -286,7 +302,6 @@ class YOLOv3Client(object):
 				if box.classes[i] > self.obj_threshold:
 					final_label += self.all_labels[i]
 					label = i
-					print ("{}: {:.4f}%".format(self.all_labels[i], box.classes[i]*100))
 
 					if verbose:
 						print ("{}: {:.3f}%".format(self.all_labels[i], box.classes[i]*100))
@@ -302,8 +317,12 @@ class YOLOv3Client(object):
 										])
 
 			if label >= 0:
-				cv2.rectangle(image, (box.xmin, box.ymin), (box.xmax, box.ymax), (0, 255, 3), 3)
-				cv2.putText(image, '{} {:.3f}'.format(final_label, box.get_confidence()), (box.xmax, box.ymin - 13), cv2.FONT_HERSHEY_SIMPLEX, 1e-3 * image.shape[0], (0, 255, 0), 2)
+				if random_coloring:
+					r, g, b = np.random.randint(0, 255), np.random.randint(0, 255), np.random.randint(0, 255)
+				else:
+					r, g, b = 0, 255, 0
+				cv2.rectangle(image, (box.xmin, box.ymin), (box.xmax, box.ymax), (r, g, b), 3)
+				cv2.putText(image, '{} {:.3f}'.format(final_label, box.get_confidence()), (box.xmax, box.ymin - 13), cv2.FONT_HERSHEY_SIMPLEX, 1e-3 * image.shape[0], (r, g, b), 2)
 
 		return final_boxes, image
 
@@ -317,10 +336,10 @@ class YOLOv3Client(object):
 		self.yolo_model = self.load_architecture() # loading weights into model
 		loader.load_weights(self.yolo_model, verbose)
 
-	def get_predictions(self, original_image):
+	def predict(self, original_image, return_img=False, verbose=True):
 		"""
 		Returns a list of BoundingBox metadata (class label, confidence score, coordinates)
-		and the edited image with bounding boxes and their corresponding text labels
+		and the edited image with bounding boxes and their corresponding text labels/confidence scores
 		"""
 		image_h, image_w = original_image.shape[:2]
 
@@ -332,12 +351,15 @@ class YOLOv3Client(object):
 		boxes = []
 
 		for i in range(len(preds)):
-			boxes += self.decode_output(preds[i][0], self.anchors[i])
+			boxes += self.decode_preds(preds[i][0], self.anchors[i])
 
 		boxes = self.rectify_boxes(boxes, image_h, image_w)
 		boxes = self.non_maximum_suppression(boxes)
 
-		box_list, box_image = self.get_boxes(original_image, boxes)
-		box_image = box_image.squeeze()
+		box_list, box_image = self.get_boxes(original_image, boxes, verbose)
 
-		return box_list, box_image
+		if return_img:
+			box_image = box_image.squeeze()
+			return box_list, box_image
+		else:
+			return box_list

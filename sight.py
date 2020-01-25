@@ -114,34 +114,8 @@ class Sightseer(object):
 
 		return image_path	
 	
-	def render_image(self, original_image, boxes, save_image=True, random_coloring=True):
-		original_image = original_image.squeeze()
-		for i in range(len(boxes)):
-			box = boxes[i]
-			
-			label = box[0]
-			confidence = box[1]
-			coords = box[2]
-
-			ymin, xmin, ymax, xmax = coords['ymin'], coords['xmin'], coords['ymax'], coords['xmax']
-
-			if random_coloring:
-				r = np.random.randint(0, 255)
-				g = np.random.randint(0, 255)
-				b = np.random.randint(0, 255)
-			else:
-				r = 0
-				g = 255
-				b = 0			
-			
-			cv2.rectangle(original_image, (xmin, ymin), (xmax, ymax), (r, g, b), 3)
-			cv2.putText(original_image, label + ': ' + str(confidence), 
-						(xmin, ymin - 13), 
-						cv2.FONT_HERSHEY_SIMPLEX, 
-						1e-3 * original_image.shape[0], 
-						(r, g, b), 2)	
-
-		plt.imshow(original_image)
+	def render_image(self, image, save_image=False):
+		plt.imshow(image)
 		plt.show()
 
 		if save_image:
