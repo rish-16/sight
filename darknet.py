@@ -304,6 +304,8 @@ def rectify_yolo_boxes(boxes, img_h, img_w, neth, netw):
         boxes[i].xmax = int((boxes[i].xmax - x_offset) / x_scale * img_w)
         boxes[i].ymin = int((boxes[i].ymin - y_offset) / y_scale * img_h)
         boxes[i].ymax = int((boxes[i].ymax - y_offset) / y_scale * img_h)
+
+    return boxes
                 
 def non_maximum_suppresion(boxes, nms_thresh):
     if len(boxes) > 0:
@@ -324,6 +326,7 @@ def non_maximum_suppresion(boxes, nms_thresh):
 
                 if bbox_iou(boxes[index_i], boxes[index_j]) >= nms_thresh:
                     boxes[index_j].classes[c] = 0
+    return boxes
 
 def render_boxes(img, boxes, labels, obj_thresh):
     for box in boxes:
@@ -383,8 +386,8 @@ boxes = []
 for i in range(len(yolos)):
     boxes += decode_netout(yolos[i][0], anchors[i], obj_thresh, nms_thresh, net_h, net_w)
 
-rectify_yolo_boxes(boxes, img_h, img_w, net_h, net_w)    
-non_maximum_suppresion(boxes, nms_thresh)
+boxes = rectify_yolo_boxes(boxes, img_h, img_w, net_h, net_w)    
+boxes = non_maximum_suppresion(boxes, nms_thresh)
 
 bbox_img = render_boxes(img, boxes, labels, obj_thresh)
 plt.imshow(bbox_img)

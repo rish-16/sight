@@ -145,7 +145,7 @@ class YOLOv3Client(object):
 
 	def preprocess(self, image):
 		"""
-		Resizes image to appropriate dimensions
+		Resizes image to appropriate dimensions for YOLOv3
 		"""
 		new_h, new_w, _ = image.shape
 
@@ -156,13 +156,15 @@ class YOLOv3Client(object):
 			new_w = (new_w * self.net_h)//new_h
 			new_h = self.net_h        
 
+		# resize the image to the new size
 		resized = cv2.resize(image[:, :, ::-1]/255., (int(new_w), int(new_h)))
 
-		new_image = np.ones((self.net_h, self.net_w, 3)) * 0.5
-		new_image[int((self.net_h-new_h)//2):int((self.net_h+new_h)//2), int((self.net_w-new_w)//2):int((self.net_w+new_w)//2), :] = resized
-		new_image = np.expand_dims(new_image, 0)
+		# embed the image into the standard letter box
+		new_img = np.ones((self.net_h, self.net_w, 3)) * 0.5
+		new_img[int((self.net_h-new_h)//2):int((self.net_h+new_h)//2), int((self.net_w-new_w)//2):int((self.net_w+new_w)//2), :] = resized
+		new_img = np.expand_dims(new_img, 0)
 
-		return new_image
+		return new_img
 
 	def interval_overlap(self, int_a, int_b):
 		x1, x2 = int_a
@@ -195,27 +197,27 @@ class YOLOv3Client(object):
 
 		return float(intersect) / union		
 
-	def non_maximum_suppression(self, bboxes):
-		if len(bboxes) > 0:
-			nb_class = len(bboxes[0].classes)
+	def non_maximum_suppression(self, boxes):
+		if len(boxes) > 0:
+			nb_class = len(boxes[0].classes)
 		else:
 			return
 			
 		for c in range(nb_class):
-			sorted_indices = np.argsort([-box.classes[c] for box in bboxes])
+			sorted_indices = np.argsort([-box.classes[c] for box in boxes])
 
 			for i in range(len(sorted_indices)):
 				index_i = sorted_indices[i]
 
-				if bboxes[index_i].classes[c] == 0: continue
+				if boxes[index_i].classes[c] == 0: continue
 
 				for j in range(i+1, len(sorted_indices)):
 					index_j = sorted_indices[j]
 
-					if self.bbox_iou(bboxes[index_i], bboxes[index_j]) >= self.nms_threshold:
-						bboxes[index_j].classes[c] = 0
+					if self.bbox_iou(boxes[index_i], boxes[index_j]) >= self.nms_threshold:
+						boxes[index_j].classes[c] = 0
 
-		return bboxes
+		return boxes
 
 	def decode_output(self, preds, anchors):
 		gridh, gridw = preds.shape[:2]
@@ -237,7 +239,7 @@ class YOLOv3Client(object):
 			for b in range(nb_box):
 				objectness = preds[int(row)][int(col)][b][4]
 
-				if(objectness.all() <= self.obj_threshold): continue
+				if (objectness.all() <= self.obj_threshold): continue
 
 				x, y, w, h = preds[int(row)][int(col)][b][:4]
 
@@ -254,7 +256,7 @@ class YOLOv3Client(object):
 
 		return boxes
 
-	def rectify_bboxes(self, bboxes, image_h, image_w):
+	def rectify_boxes(self, boxes, image_h, image_w):
 		if (float(self.net_w)/image_w) < (float(self.net_h)/image_h):
 			new_w = self.net_w
 			new_h = (image_h * self.net_w)/ image_w
@@ -262,33 +264,34 @@ class YOLOv3Client(object):
 			new_h = self.net_w
 			new_w = (image_w * self.net_h) / image_h
 			
-		for i in range(len(bboxes)):
+		for i in range(len(boxes)):
 			x_offset, x_scale = (self.net_w - new_w)/2./self.net_w, float(new_w)/self.net_w
 			y_offset, y_scale = (self.net_h - new_h)/2./self.net_h, float(new_h)/self.net_h
 			
-			bboxes[i].xmin = int((bboxes[i].xmin - x_offset) / x_scale * image_w)
-			bboxes[i].xmax = int((bboxes[i].xmax - x_offset) / x_scale * image_w)
-			bboxes[i].ymin = int((bboxes[i].ymin - y_offset) / y_scale * image_h)
-			bboxes[i].ymax = int((bboxes[i].ymax - y_offset) / y_scale * image_h)
+			boxes[i].xmin = int((boxes[i].xmin - x_offset) / x_scale * image_w)
+			boxes[i].xmax = int((boxes[i].xmax - x_offset) / x_scale * image_w)
+			boxes[i].ymin = int((boxes[i].ymin - y_offset) / y_scale * image_h)
+			boxes[i].ymax = int((boxes[i].ymax - y_offset) / y_scale * image_h)
 
-		return bboxes
+		return boxes
 
-	def get_bboxes(self, image, boxes, verbose=True):
+	def get_boxes(self, image, boxes, verbose=True):
 		final_boxes = []
 
 		for box in boxes:
-			label_str = ""
+			final_label = ""
 			label = -1
 
 			for i in range(len(self.all_labels)):
 				if box.classes[i] > self.obj_threshold:
-					label_str += self.all_labels[i]
+					final_label += self.all_labels[i]
 					label = i
-					
+					print ("{}: {:.4f}%".format(self.all_labels[i], box.classes[i]*100))
+
 					if verbose:
 						print ("{}: {:.3f}%".format(self.all_labels[i], box.classes[i]*100))
 
-					final_boxes.append([label_str,
+					final_boxes.append([final_label,
 										box.classes[i] * 100,
 										{
 											'xmin': box.xmin,
@@ -298,25 +301,11 @@ class YOLOv3Client(object):
 										}
 										])
 
-		return  final_boxes
+			if label >= 0:
+				cv2.rectangle(image, (box.xmin, box.ymin), (box.xmax, box.ymax), (0, 255, 3), 3)
+				cv2.putText(image, '{} {:.3f}'.format(final_label, box.get_confidence()), (box.xmax, box.ymin - 13), cv2.FONT_HERSHEY_SIMPLEX, 1e-3 * image.shape[0], (0, 255, 0), 2)
 
-	def render_image(self, image, box_list, random_coloring=True):
-		for box in box_list:
-			label = box[0]
-			confidence = box[1]
-			coords = box[2]
-
-			xmin, ymin, xmax, ymax = coords['xmin'], coords['ymin'], coords['xmax'], coords['ymax']
-
-			if random_coloring:
-				r, g, b = np.random.randint(0, 255), np.random.randint(0, 255), np.random.randint(0, 255)
-			else:
-				r, g, b = 0, 255, 0
-
-			cv2.rectangle(image, (xmin, ymin), (xmax, ymax), (r, g, b), 1)
-			cv2.putText(image, '{} {:.3f}'.format(label, confidence), (xmax, ymin - 13), cv2.FONT_HERSHEY_SIMPLEX, 1e-3 * image.shape[0], (r, g, b), 2)
-
-		return image
+		return final_boxes, image
 
 	def load_model(self, default_path="./bin/yolov3.weights", verbose=True):
 		"""
@@ -328,28 +317,27 @@ class YOLOv3Client(object):
 		self.yolo_model = self.load_architecture() # loading weights into model
 		loader.load_weights(self.yolo_model, verbose)
 
-	def get_predictions(self, image):
+	def get_predictions(self, original_image):
 		"""
 		Returns a list of BoundingBox metadata (class label, confidence score, coordinates)
 		and the edited image with bounding boxes and their corresponding text labels
 		"""
-		image_h, image_w = image.shape[:2]
+		image_h, image_w = original_image.shape[:2]
 
 		if self.yolo_model == None:
 			raise ValueError ("YOLOv3 weights needs to be downloaded and configured into the model before use. You can use the `load_model()` method to do so.")
 
-		preds = self.yolo_model.predict(image)
+		proc_image = self.preprocess(original_image)
+		preds = self.yolo_model.predict(proc_image)
 		boxes = []
 
 		for i in range(len(preds)):
 			boxes += self.decode_output(preds[i][0], self.anchors[i])
 
-		boxes = self.rectify_bboxes(boxes, image_h, image_w)
+		boxes = self.rectify_boxes(boxes, image_h, image_w)
 		boxes = self.non_maximum_suppression(boxes)
 
-		box_list = self.get_bboxes(image, boxes)
-		new_image = self.render_image(image, box_list)
-		new_image = new_image.squeeze()
-		print (new_image.shape)
+		box_list, box_image = self.get_boxes(original_image, boxes)
+		box_image = box_image.squeeze()
 
-		return box_list, new_image
+		return box_list, box_image
