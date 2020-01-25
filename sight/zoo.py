@@ -10,7 +10,7 @@ import tensorflow as tf
 from tensorflow.keras.layers import Input, UpSampling2D, concatenate
 from tensorflow.keras.models import Model
 
-from blocks import ConvBlock, BoundingBox, SightLoader
+from .blocks import ConvBlock, BoundingBox, SightLoader
 
 # disabling warnings and logging
 os.environ['TF_CPP_MIN_LOG_LEVEL'] = '3'
