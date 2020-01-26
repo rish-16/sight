@@ -321,7 +321,8 @@ class YOLOv3Client(object):
 					r, g, b = np.random.randint(0, 255), np.random.randint(0, 255), np.random.randint(0, 255)
 				else:
 					r, g, b = 0, 255, 0
-				cv2.rectangle(image, (box.xmin, box.ymin), (box.xmax, box.ymax), (r, g, b), 3)
+
+				cv2.rectangle(image, (box.xmin, box.ymin), (box.xmax, box.ymax), (r, g, b), 1)
 				cv2.putText(image, '{} {:.3f}'.format(final_label, box.get_confidence()), (box.xmax, box.ymin - 13), cv2.FONT_HERSHEY_SIMPLEX, 1e-3 * image.shape[0], (r, g, b), 2)
 
 		return final_boxes, image
