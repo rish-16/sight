@@ -10,8 +10,10 @@ setup(
   description="State-of-the-art Computer Vision and Object Detection for TensorFlow.",
   long_description=README,
   long_description_content_type="text/markdown",
-  author="",
-  author_email="",
+  url='https://github.com/rish-16/sight',
+  download_url="https://github.com/rish-16/sight/archive/1.0.0.tar.gz",
+  author="Rishabh Anand",
+  author_email="mail.rishabh.anand@gmail.com",
   license="ASF",
   packages=["sightseer"],
   zip_safe=False
