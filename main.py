@@ -1,5 +1,5 @@
-from sight.sight import Sightseer
-from sight.zoo import YOLOv3Client
+from sightseer.sight import Sightseer
+from sightseer.zoo import YOLOv3Client
 
 # downloading and configuring weights and hyperparams
 yolo = YOLOv3Client()
