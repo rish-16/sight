@@ -48,7 +48,7 @@ ss = Sightseer()
 image = ss.load_image("path/to/image")
 ```
 
-<strong>2. Using models from `sight.zoo`</strong>
+<strong>2. Using models from `sightseer.zoo`</strong>
 
 Once installed, any model offered by `sightseer` can be accessed in less than 10 lines of code. For instance, the code to use the YOLOv3 (Darknet) model is as follows:
 
