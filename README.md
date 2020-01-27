@@ -37,7 +37,7 @@ pip install sightseer
 1. YOLOv3 (Darknet by Joseph Redmon)
 2. More upcoming!
 
-## Usage
+## Features
 
 <strong>1. Loading images</strong>
 
