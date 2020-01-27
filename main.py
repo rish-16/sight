@@ -6,8 +6,8 @@ yolo = YOLOv3Client()
 yolo.load_model()
 
 # preprocessing image to fit YOLO9000 specs
-ss = Sightseer("./test_data/img/farm.jpg")
-image = ss.load_image()
+ss = Sightseer()
+image = ss.load_image("./test_data/img/farm.jpg")
 
 # obtaining bounding boxes and displaying image
 preds, pred_img = yolo.predict(image, return_img=True, verbose=True)

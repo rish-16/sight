@@ -7,8 +7,8 @@ import matplotlib.pyplot as plt
 from matplotlib.patches import Rectangle
 
 class Sightseer(object):
-	def __init__(self, filepath):
-		self.filepath = filepath
+	def __init__(self):
+		self.filepath = None
 
 	def render_grayscale(self, frame):
 		gray_frame = cv2.cvtColor(frame, cv2.COLOR_BGR2GRAY)
@@ -72,8 +72,9 @@ class Sightseer(object):
 			frames = np.array(frames)
 			return frames
 
-	def load_source(self, return_data=True, set_gray=True, kill_key="q"):
-		vidcap = cv2.VideoCapture(self.filepath)
+	def load_vidsource(self, filepath, return_data=True, set_gray=True, kill_key="q"):
+		self.filepath = filepath
+		vidcap = cv2.VideoCapture(filepath)
 		
 		frame_exists, frame = vidcap.read()
 		frames = []
@@ -98,9 +99,10 @@ class Sightseer(object):
 			frames = np.array(frames)
 			return frames
 
-	def load_image(self):
+	def load_image(self, filepath):
+		self.filepath = filepath
 		try:
-			img = cv2.imread(self.filepath)
+			img = cv2.imread(filepath)
 			return img
 		except:
 			raise FileExistsError ("File does not exist. You may want to check the filepath again.")

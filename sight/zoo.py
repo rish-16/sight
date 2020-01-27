@@ -53,25 +53,24 @@ class YOLOv3Client(object):
 
 	def download_weights(self):
 		"""
-		Downloads the weights and checkpoints from 
-		online and saves them locally
+		Downloads the weights from online and saves them locally
 		"""
 
-		if os.path.exists("./bin/yolov3.weights") and os.path.exists("./bin/yolov3.cfg"):
-			print ("Weights and model config already exist. Proceeding to load YOLOv3Client...")
+		if os.path.exists("./bin/yolov3.weights"):
+			print ("Weights already exist. Proceeding to load YOLOv3Client...")
 		else:
-			print ("Downloading weights and model config. This may may take a moment...")
+			print ("Downloading weights. This may may take a moment...")
 			weights_url = "https://pjreddie.com/media/files/yolov3.weights"
-			config_url = "https://raw.githubusercontent.com/pjreddie/darknet/master/cfg/yolov3.cfg"
+			# config_url = "https://raw.githubusercontent.com/pjreddie/darknet/master/cfg/yolov3.cfg"
 	
 			wget.download(weights_url, os.getcwd() + "/yolov3.weights")
-			wget.download(config_url, os.getcwd() + "/yolov3.cfg")
+			# wget.download(config_url, os.getcwd() + "/yolov3.cfg")
 
 			os.mkdir("./bin", 0o755) # configuring admin rights
 			shutil.move("./yolov3.weights", "./bin/yolov3.weights")
-			shutil.move("./yolov3.cfg", "./bin/yolov3.cfg")
+			# shutil.move("./yolov3.cfg", "./bin/yolov3.cfg")
 
-			print ("\n\nWeights and config file downloaded successfully!")	
+			print ("\n\nWeights downloaded successfully!")
 
 	def load_architecture(self):
 		"""
@@ -364,3 +363,7 @@ class YOLOv3Client(object):
 			return box_list, box_image
 		else:
 			return box_list
+
+class MaskRCNNClient(object):
+	def __init__(self):
+		pass
