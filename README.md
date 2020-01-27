@@ -69,3 +69,13 @@ preds, pred_img = yolo.predict(image, return_img=True)
 pprint (preds)
 ss.render_image(pred_img)
 ```
+
+## Contributing
+
+Suggestions, improvements, and enhancements are always welcome! If you have any issues, please do raise one in the Issues section. If you have an improvement, do file an issue to discuss the suggestion before creating a PR.
+
+All ideas – no matter how outrageous – welcome!
+
+## Licence
+
+[Apache Licencse 2.0](https://github.com/rish-16/sight/blob/master/LICENSE)
