@@ -17,9 +17,9 @@ class DataAnnotator(object):
 		xml_df = pd.DataFrame(annotations, columns=columns)
 		xml_df.to_csv(outfile, index=None)
 
-	def class_to_int(self, class):
+	def class_to_int(self, class_label):
 		for i in range(len(self.classes)):
-			if self.classes[i] == class:
+			if self.classes[i] == class_label:
 				return i + 1
 			else:
 				return None
