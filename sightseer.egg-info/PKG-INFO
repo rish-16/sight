@@ -1,11 +1,12 @@
 Metadata-Version: 2.1
 Name: sightseer
-Version: 1.0.1
+Version: 1.0.2
 Summary: State-of-the-art Computer Vision and Object Detection for TensorFlow.
-Home-page: UNKNOWN
-Author: 
-Author-email: 
+Home-page: https://github.com/rish-16/sight
+Author: Rishabh Anand
+Author-email: mail.rishabh.anand@gmail.com
 License: ASF
+Download-URL: https://github.com/rish-16/sight/archive/1.0.0.tar.gz
 Description: <p align="center">
             <br>
         	<img src="./Assets/logo.png" width=200>
