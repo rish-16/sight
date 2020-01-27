@@ -1,6 +1,6 @@
 <p align="center">
     <br>
-	<img src="./Assets/logo.png" width=200>
+	<img src="https://github.com/rish-16/sight/blob/master/Assets/logo.png?raw=true" width=200>
     <br>
 <p>
 

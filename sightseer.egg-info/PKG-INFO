@@ -1,6 +1,6 @@
 Metadata-Version: 2.1
 Name: sightseer
-Version: 1.0.5
+Version: 1.0.7
 Summary: State-of-the-art Computer Vision and Object Detection for TensorFlow.
 Home-page: https://github.com/rish-16/sight
 Author: Rishabh Anand
@@ -9,7 +9,7 @@ License: ASF
 Download-URL: https://github.com/rish-16/sight/archive/1.0.0.tar.gz
 Description: <p align="center">
             <br>
-        	<img src="./Assets/logo.png" width=200>
+        	<img src="https://github.com/rish-16/sight/blob/master/Assets/logo.png?raw=true" width=200>
             <br>
         <p>
         
@@ -46,7 +46,7 @@ Description: <p align="center">
         1. YOLOv3 (Darknet by Joseph Redmon)
         2. More upcoming!
         
-        ## Usage
+        ## Features
         
         <strong>1. Loading images</strong>
         
@@ -57,7 +57,7 @@ Description: <p align="center">
         image = ss.load_image("path/to/image")
         ```
         
-        <strong>2. Using models from `sight.zoo`</strong>
+        <strong>2. Using models from `sightseer.zoo`</strong>
         
         Once installed, any model offered by `sightseer` can be accessed in less than 10 lines of code. For instance, the code to use the YOLOv3 (Darknet) model is as follows:
         
