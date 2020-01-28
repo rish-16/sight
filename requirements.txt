@@ -2,3 +2,5 @@ tensorflow==1.15.0
 pillow
 opencv-python
 wget
+pandas
+matplotlib
