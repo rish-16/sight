@@ -5,6 +5,9 @@
 <p>
 
 <p align="center">
+    <a href="https://badge.fury.io/py/sightseer">
+        <img src="https://badge.fury.io/py/sightseer.svg" alt="PyPI version" height="18">
+    </a>
     <a href="https://github.com/rish-16/sight/blob/master/LICENSE">
 		<img alt="AUR license" src="https://img.shields.io/badge/License-Apache%202.0-yellow.svg">
     </a>
@@ -13,6 +16,10 @@
 <h3 align="center">
 <p>State-of-the-art Computer Vision and Object Detection for TensorFlow.</p>
 </h3>
+
+<h5 align="center">
+<p>Made by Rishabh Anand • <a href="https://rish-16.github.io">https://rish-16.github.io</a></p>
+</h5>
 
 *sightseer* provides state-of-the-art general-purpose architectures (YOLOv3, MaskRCNN, Fast/Faster RCNN, SSD...) for Computer Vision and Object Detection tasks with 30+ pretrained models written in TensorFlow 1.15.
 
