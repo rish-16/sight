@@ -8,7 +8,7 @@ with open(path.join(this_directory, 'README.md')) as f:
 
 setup(
   name="sightseer",
-  version="1.0.9",
+  version="1.0.1.1",
   description="State-of-the-art Computer Vision and Object Detection for TensorFlow.",
   long_description=long_description,
   long_description_content_type="text/markdown",
