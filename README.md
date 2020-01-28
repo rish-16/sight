@@ -39,9 +39,9 @@ When your virtual environment is set up with TensorFlow, you can install `sights
 pip install sightseer
 ```
 
-### Model Architectures (as of now)
+### Model Clients (as of now)
 
-1. YOLOv3 (Darknet by Joseph Redmon)
+1. `YOLOv3Client` (Darknet by Joseph Redmon)
 
 > Facebook AI's *Mask R-CNN* will be out in the v1.1.0 release. For more information on model release, check out the [Roadmap](https://github.com/rish-16/sight/blob/master/ROADMAP.md).
 
