@@ -364,6 +364,17 @@ class YOLOv3Client(object):
 		else:
 			return box_list
 
+	def framewise_predict(self, vid_frames, return_vid=True):
+		final_preds = []
+		final_frames = []
+		for frame in vid_frames:
+			cur_preds, edited_frame = self.predict(frame, return_img=True)
+
+			final_preds.append(cur_preds)
+			final_frames.append(edited_frame)
+
+		return final_preds, final_frames
+
 class MaskRCNNClient(object):
 	def __init__(self):
 		pass

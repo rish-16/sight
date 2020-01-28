@@ -72,25 +72,24 @@ class Sightseer(object):
 			frames = np.array(frames)
 			return frames
 
-	def load_vidsource(self, filepath, return_data=True, set_gray=True, kill_key="q"):
+	def load_vidsource(self, filepath, return_data=True, set_gray=False):
 		self.filepath = filepath
 		vidcap = cv2.VideoCapture(filepath)
+
+		print ("Extract frames from video...")
 		
-		frame_exists, frame = vidcap.read()
 		frames = []
 
-		while frame_exists:
+		while vidcap.isOpened():
 			frame_exists, frame = vidcap.read()
-			print (frame.shape)
+
+			if frame_exists == False:
+				break
 
 			if set_gray:
 				frame = self.render_grayscale(frame)
 
-			cv2.imshow('frame', frame)
 			frames.append(frame)
-
-			if cv2.waitKey(1) & 0xFF == ord(kill_key):
-				break
 		
 		vidcap.release()
 		cv2.destroyAllWindows()
