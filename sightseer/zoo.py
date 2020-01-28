@@ -8,7 +8,7 @@ import cv2
 import numpy as np
 import tensorflow as tf
 from tensorflow.keras.layers import Input, UpSampling2D, concatenate
-from tensorflow.keras.models import Model
+from tensorflow.keras.models import Model, load_model
 
 from .blocks import ConvBlock, BoundingBox, SightLoader
 
@@ -50,7 +50,7 @@ class YOLOv3Client(object):
 						"chair", "sofa", "pottedplant", "bed", "diningtable", "toilet", "tvmonitor", "laptop", "mouse",
 						"remote", "keyboard", "cell phone", "microwave", "oven", "toaster", "sink", "refrigerator",
 						"book", "clock", "vase", "scissors", "teddy bear", "hair drier", "toothbrush"]
-
+						
 	def download_weights(self):
 		"""
 		Downloads the weights from online and saves them locally
@@ -61,14 +61,11 @@ class YOLOv3Client(object):
 		else:
 			print ("Downloading weights. This may may take a moment...")
 			weights_url = "https://pjreddie.com/media/files/yolov3.weights"
-			# config_url = "https://raw.githubusercontent.com/pjreddie/darknet/master/cfg/yolov3.cfg"
 	
 			wget.download(weights_url, os.getcwd() + "/yolov3.weights")
-			# wget.download(config_url, os.getcwd() + "/yolov3.cfg")
 
 			os.mkdir("./bin", 0o755) # configuring admin rights
 			shutil.move("./yolov3.weights", "./bin/yolov3.weights")
-			# shutil.move("./yolov3.cfg", "./bin/yolov3.cfg")
 
 			print ("\n\nWeights downloaded successfully!")
 
@@ -326,15 +323,24 @@ class YOLOv3Client(object):
 
 		return final_boxes, image
 
-	def load_model(self, default_path="./bin/yolov3.weights", verbose=True):
+	def save_model(self):
+		self.yolo_model.save("./bin/yolov3.h5")
+
+	def load_model(self, default_path="./bin/yolov3.weights", cache=True, verbose=True):
 		"""
 		Downloads weights and config, loads checkpoints into architecture
 		"""
-		self.download_weights() # downloading weights from online
-		loader = SightLoader(default_path)
-		
-		self.yolo_model = self.load_architecture() # loading weights into model
-		loader.load_weights(self.yolo_model, verbose)
+		if os.path.exists("./bin/yolov3.h5"):
+			print ("Weights already exist. Proceeding to load YOLOv3Client...")
+			self.yolo_model = load_model("./bin/yolov3.h5")
+		else:
+			self.download_weights() # downloading weights from online
+			loader = SightLoader(default_path)
+			
+			self.yolo_model = self.load_architecture() # loading weights into model
+			loader.load_weights(self.yolo_model, verbose)
+
+			self.save_model()
 
 	def predict(self, original_image, return_img=False, verbose=True):
 		"""
@@ -364,11 +370,11 @@ class YOLOv3Client(object):
 		else:
 			return box_list
 
-	def framewise_predict(self, vid_frames, return_vid=True):
+	def framewise_predict(self, vid_frames):
 		final_preds = []
 		final_frames = []
 		for frame in vid_frames:
-			cur_preds, edited_frame = self.predict(frame, return_img=True)
+			cur_preds, edited_frame = self.predict(frame, return_img=True, verbose=False)
 
 			final_preds.append(cur_preds)
 			final_frames.append(edited_frame)
