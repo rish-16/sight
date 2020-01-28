@@ -3,6 +3,7 @@
 from sightseer import Sightseer
 from sightseer.zoo import YOLOv3Client
 from pprint import pprint
+import cv2
 
 yolo = YOLOv3Client()
 yolo.load_model() # downloads weights
