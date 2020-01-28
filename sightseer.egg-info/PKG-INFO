@@ -1,6 +1,6 @@
 Metadata-Version: 2.1
 Name: sightseer
-Version: 1.0.7
+Version: 1.0.8
 Summary: State-of-the-art Computer Vision and Object Detection for TensorFlow.
 Home-page: https://github.com/rish-16/sight
 Author: Rishabh Anand
@@ -41,14 +41,33 @@ Description: <p align="center">
         pip install sightseer
         ```
         
-        ### Model Architectures
+        ### Model Architectures (as of now)
         
         1. YOLOv3 (Darknet by Joseph Redmon)
-        2. More upcoming!
+        
+        > Facebook AI's *Mask R-CNN* will be out in the v1.1.0 release. For more information on model release, check out the [Roadmap](https://github.com/rish-16/sight/blob/master/ROADMAP.md).
+        
+        
+        # Components of `sightseer`
+        
+        The package comes with 4 major components that help with different parts of the object detection process all the way from preparing your raw data to getting predictions and displaying them.
+        
+        | Component | Description                                                               |
+        |-----------|---------------------------------------------------------------------------|
+        | Sightseer | Obtains image data or video footage                                       |
+        | Proc      | Provides image/frame-wise annotation and inter-format conversion tools    |
+        | Zoo       | Stores the wrappers over all state-of-the-art models and configs          |
+        | Serve     | Provides deployment and model serving protocols and services              |
+        
+        If not using custom datasets, `Sightseer` and `Zoo` are the submodules majorly used for generic predictions from pre-trained models. When there is custom data involved, you can use `Proc` to annotate your datasets and even convert them between XML/JSON/CSV/TFRecord formats. 
+        
+        > `Serve` is an experimental productionising submodule that helps deploy your models on cloud services like AWS and GCP. For more details on future tools and services, check out the [Roadmap](https://github.com/rish-16/sight/blob/master/ROADMAP.md).
         
         ## Features
         
         <strong>1. Loading images</strong>
+        
+        Footage or raw images can be rendered using `Sightseer` before being ingested into models or further preprocessed.
         
         ```python
         from sightseer import Sightseer
@@ -56,6 +75,8 @@ Description: <p align="center">
         ss = Sightseer()
         image = ss.load_image("path/to/image")
         ```
+        
+        > Support for video, webcam footage, and screen recording will be out in the coming v1.1.0 release.
         
         <strong>2. Using models from `sightseer.zoo`</strong>
         
@@ -78,6 +99,8 @@ Description: <p align="center">
         pprint (preds)
         ss.render_image(pred_img)
         ```
+        
+        This can even be converted into a Command-line Interface (CLI) using arguments from `argparse`.
         
         ## Contributing
         
