@@ -37,9 +37,26 @@ pip install sightseer
 1. YOLOv3 (Darknet by Joseph Redmon)
 2. More upcoming!
 
+# Components of `sightseer`
+
+The package comes with 4 major components that help with different parts of the object detection process all the way from preparing your raw data to getting predictions and displaying them.
+
+| Component | Description                                                               |
+|-----------|---------------------------------------------------------------------------|
+| Sightseer | Obtains image data or video footage                                       |
+| Proc      | Provides image/frame-wise annotation and inter-format conversion tools    |
+| Zoo       | Stores the wrappers over all state-of-the-art models and configs          |
+| Serve     | Provides deployment and model serving protocols and services              |
+
+If not using custom datasets, `Sightseer` and `Zoo` are the submodules majorly used for generic predictions from pre-trained models. When there is custom data involved, you can use `Proc` to annotate your datasets and even convert them between XML/JSON/CSV/TFRecord formats. 
+
+> `Serve` is an experimental productionising submodule that helps deploy your models on cloud services like AWS and GCP. For now, the
+
 ## Features
 
 <strong>1. Loading images</strong>
+
+Footage or raw images can be rendered using `Sightseer` before being ingested into models or further preprocessed.
 
 ```python
 from sightseer import Sightseer
@@ -47,6 +64,8 @@ from sightseer import Sightseer
 ss = Sightseer()
 image = ss.load_image("path/to/image")
 ```
+
+> Support for video, webcam footage, and screen recording will be out in the coming v1.1.0 release.
 
 <strong>2. Using models from `sightseer.zoo`</strong>
 
@@ -69,6 +88,8 @@ preds, pred_img = yolo.predict(image, return_img=True)
 pprint (preds)
 ss.render_image(pred_img)
 ```
+
+This can even be converted into a Command-line Interface (CLI) using arguments from `argparse`.
 
 ## Contributing
 
