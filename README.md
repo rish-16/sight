@@ -32,10 +32,12 @@ When your virtual environment is set up with TensorFlow, you can install `sights
 pip install sightseer
 ```
 
-### Model Architectures
+### Model Architectures (as of now)
 
 1. YOLOv3 (Darknet by Joseph Redmon)
-2. More upcoming!
+
+> Facebook AI's *Mask R-CNN* will be out in the v1.1.0 release. For more information on model release, check out the [Roadmap](https://github.com/rish-16/sight/blob/master/ROADMAP.md).
+
 
 # Components of `sightseer`
 
@@ -50,7 +52,7 @@ The package comes with 4 major components that help with different parts of the 
 
 If not using custom datasets, `Sightseer` and `Zoo` are the submodules majorly used for generic predictions from pre-trained models. When there is custom data involved, you can use `Proc` to annotate your datasets and even convert them between XML/JSON/CSV/TFRecord formats. 
 
-> `Serve` is an experimental productionising submodule that helps deploy your models on cloud services like AWS and GCP. For now, the
+> `Serve` is an experimental productionising submodule that helps deploy your models on cloud services like AWS and GCP. For more details on future tools and services, check out the [Roadmap](https://github.com/rish-16/sight/blob/master/ROADMAP.md).
 
 ## Features
 
