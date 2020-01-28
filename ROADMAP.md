@@ -1,11 +1,11 @@
-# Roadmap for `sight`
+# Roadmap for `sightseer`
 
 This document acts as a sort of to-do list. It contains all the present requirements and features. The plan and order will be followed until the package's completion.
 
 ---
 
 ## The Components
-`sight` is centered around 4 major components:
+`sightseer` is centered around 4 major components:
 
 | Component | Description                                                      |
 |-----------|------------------------------------------------------------------|
