@@ -9,7 +9,7 @@
         <img alt="PyPI" src="https://img.shields.io/pypi/v/sightseer?color=%231dd1a1">
     </a>
     <a href="https://github.com/rish-16/sight/blob/master/LICENSE">
-		<img alt="AUR license" src="https://img.shields.io/badge/License-Apache%202.0-yellow.svg">
+		<img alt="PyPI - License" src="https://img.shields.io/pypi/l/sightseer?color=%23feca57">
     </a>
 </p>
 
