@@ -16,7 +16,7 @@ This document acts as a sort of to-do list. It contains all the present requirem
 
 ---
 
-## `v1.1.0` Planned Release
+## `v1.2.0` Planned Release
 
 The upcoming version will tentatively contain the following features:
 
