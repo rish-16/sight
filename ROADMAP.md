@@ -49,7 +49,7 @@ The upcoming version will tentatively contain the following features:
 
 ### Zoo 
 
-**Models**
+*Models*
 
 - [x] YOLOv3 (`YOLOv3Client`)
 - [ ] Mask RCNN (`MaskRCNNClient`)
@@ -60,7 +60,7 @@ The upcoming version will tentatively contain the following features:
 - [ ] Single Shot Detector (`SSDClient`)
 - [ ] TensorFlow Object Counting (`TFOCClient`)
 
-**Add-ons** 
+*Add-ons*
 
 - [ ] Finetuning framework
 - [ ] Hardware acceleration support (CPU, GPU, TPU)
