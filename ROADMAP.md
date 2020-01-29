@@ -37,18 +37,20 @@ This document acts as a sort of to-do list. It contains all the present requirem
 
 **Models**
 
-- [x] YOLO9000
-- [ ] Mask RCNN
-- [ ] Fast/Faster RCNN
-- [ ] TensorFlow Object Detection
-- [ ] TensorFlow Object Counting
-- [ ] Single Shot Detector
-- [ ] TensorFlow Object Counting
+- [x] YOLOv3 (`YOLOv3Client`)
+- [ ] Mask RCNN (`MaskRCNNClient`)
+- [ ] Fast RCNN (`FastRCNNClient`)
+- [ ] Faster RCNN (`FASTERRCNNClient`)
+- [ ] TinyYOLO (`TinyYOLOClient`)
+- [ ] TensorFlow Object Detection (`TFODClient`)
+- [ ] Single Shot Detector (`SSDClient`)
+- [ ] TensorFlow Object Counting (`TFOCClient`)
 
 **Add-ons** 
 
 - [ ] Finetuning framework
 - [ ] Hardware acceleration support (CPU, GPU, TPU)
+- [ ] Support for [TensorFlow 2.0](https://www.tensorflow.org/guide/effective_tf2)
 
 ### Serve
 
