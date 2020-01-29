@@ -24,7 +24,7 @@
 <p>Made by Rishabh Anand • <a href="https://rish-16.github.io">https://rish-16.github.io</a></p>
 </h5>
 
-*sightseer* provides state-of-the-art general-purpose architectures (YOLOv3, MaskRCNN, Fast/Faster RCNN, SSD...) for Computer Vision and Object Detection tasks with 30+ pretrained models written in TensorFlow 1.15.
+`sightseer` provides state-of-the-art general-purpose architectures (YOLOv3, MaskRCNN, Fast/Faster RCNN, SSD...) for Computer Vision and Object Detection tasks with 30+ pretrained models written in TensorFlow 1.15.
 
 ## Installation
 
