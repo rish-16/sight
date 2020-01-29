@@ -1,6 +1,6 @@
 Metadata-Version: 2.1
 Name: sightseer
-Version: 1.0.1.1
+Version: 1.1.0
 Summary: State-of-the-art Computer Vision and Object Detection for TensorFlow.
 Home-page: https://github.com/rish-16/sight
 Author: Rishabh Anand
@@ -17,6 +17,9 @@ Description: <p align="center">
             <a href="https://pypi.org/project/sightseer/">
                 <img alt="PyPI" src="https://img.shields.io/pypi/v/sightseer?color=%231dd1a1">
             </a>
+            <a href="https://pepy.tech/project/sightseer">
+                <img alr="PyPi - Downloads" src="https://pepy.tech/badge/sightseer">
+            </a>
             <a href="https://github.com/rish-16/sight/blob/master/LICENSE">
         		<img alt="PyPI - License" src="https://img.shields.io/pypi/l/sightseer?color=%23feca57">
             </a>
@@ -30,7 +33,7 @@ Description: <p align="center">
         <p>Made by Rishabh Anand • <a href="https://rish-16.github.io">https://rish-16.github.io</a></p>
         </h5>
         
-        *sightseer* provides state-of-the-art general-purpose architectures (YOLOv3, MaskRCNN, Fast/Faster RCNN, SSD...) for Computer Vision and Object Detection tasks with 30+ pretrained models written in TensorFlow 1.15.
+        `sightseer` provides state-of-the-art general-purpose architectures (YOLOv3, MaskRCNN, Fast/Faster RCNN, SSD...) for Computer Vision and Object Detection tasks with 30+ pretrained models written in TensorFlow 1.15.
         
         ## Installation
         
@@ -114,6 +117,10 @@ Description: <p align="center">
         Suggestions, improvements, and enhancements are always welcome! If you have any issues, please do raise one in the Issues section. If you have an improvement, do file an issue to discuss the suggestion before creating a PR.
         
         All ideas – no matter how outrageous – welcome!
+        
+        Before committing, please check the [ROADMAP](https://github.com/rish-16/sight/blob/master/ROADMAP.md) to see if proposed features are already in-development or not.
+        
+        > **Note:** Please commit all changes to the `development` experimentation branch instead of `master`.
         
         ## Licence
         
