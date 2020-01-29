@@ -16,6 +16,20 @@ This document acts as a sort of to-do list. It contains all the present requirem
 
 ---
 
+## `v1.1.0` Planned Release
+
+The upcoming version will tentatively contain the following features:
+
+### Sightseer
+- Video loading
+- Webcam footage
+- Screen recordings 
+
+### Proc
+- Inter-format data conversion for fine-tuning (XML/CSV/JSON/TFRecords)
+
+---
+
 ## Build Schedule
 
 ### Sightseer
