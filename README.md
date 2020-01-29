@@ -8,6 +8,9 @@
     <a href="https://pypi.org/project/sightseer/">
         <img alt="PyPI" src="https://img.shields.io/pypi/v/sightseer?color=%231dd1a1">
     </a>
+    <a href="https://pepy.tech/project/sightseer">
+        <img alr="PyPi - Downloads" src="https://pepy.tech/badge/sightseer">
+    </a>
     <a href="https://github.com/rish-16/sight/blob/master/LICENSE">
 		<img alt="PyPI - License" src="https://img.shields.io/pypi/l/sightseer?color=%23feca57">
     </a>
