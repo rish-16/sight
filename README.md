@@ -109,6 +109,10 @@ Suggestions, improvements, and enhancements are always welcome! If you have any 
 
 All ideas – no matter how outrageous – welcome!
 
+Before committing, please check the [ROADMAP](https://github.com/rish-16/sight/blob/master/ROADMAP.md) to see if proposed features are already in-development or not.
+
+> **Note:** Please commit all changes to the `development` experimentation branch instead of `master`.
+
 ## Licence
 
 [Apache Licencse 2.0](https://github.com/rish-16/sight/blob/master/LICENSE)
