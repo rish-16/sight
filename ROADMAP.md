@@ -49,7 +49,7 @@ The upcoming version will tentatively contain the following features:
 
 ### Zoo 
 
-*Models*
+*Models – Mostly trained on the COCO dataset*
 
 - [x] YOLOv3 (`YOLOv3Client`)
 - [ ] Mask RCNN (`MaskRCNNClient`)
@@ -59,6 +59,7 @@ The upcoming version will tentatively contain the following features:
 - [ ] TensorFlow Object Detection (`TFODClient`)
 - [ ] Single Shot Detector (`SSDClient`)
 - [ ] TensorFlow Object Counting (`TFOCClient`)
+- [ ] UNet Image Segmentation (`ImgSegClient`)
 
 *Add-ons*
 
