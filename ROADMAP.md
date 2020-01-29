@@ -16,6 +16,20 @@ This document acts as a sort of to-do list. It contains all the present requirem
 
 ---
 
+## `v1.1.0` Planned Release
+
+The upcoming version will tentatively contain the following features:
+
+### Sightseer
+- Video loading
+- Webcam footage
+- Screen recordings 
+
+### Proc
+- Inter-format data conversion for fine-tuning (XML/CSV/JSON/TFRecords)
+
+---
+
 ## Build Schedule
 
 ### Sightseer
@@ -35,20 +49,22 @@ This document acts as a sort of to-do list. It contains all the present requirem
 
 ### Zoo 
 
-**Models**
+*Models*
 
-- [x] YOLO9000
-- [ ] Mask RCNN
-- [ ] Fast/Faster RCNN
-- [ ] TensorFlow Object Detection
-- [ ] TensorFlow Object Counting
-- [ ] Single Shot Detector
-- [ ] TensorFlow Object Counting
+- [x] YOLOv3 (`YOLOv3Client`)
+- [ ] Mask RCNN (`MaskRCNNClient`)
+- [ ] Fast RCNN (`FastRCNNClient`)
+- [ ] Faster RCNN (`FASTERRCNNClient`)
+- [ ] TinyYOLO (`TinyYOLOClient`)
+- [ ] TensorFlow Object Detection (`TFODClient`)
+- [ ] Single Shot Detector (`SSDClient`)
+- [ ] TensorFlow Object Counting (`TFOCClient`)
 
-**Add-ons** 
+*Add-ons*
 
 - [ ] Finetuning framework
 - [ ] Hardware acceleration support (CPU, GPU, TPU)
+- [ ] Support for [TensorFlow 2.0](https://www.tensorflow.org/guide/effective_tf2)
 
 ### Serve
 
