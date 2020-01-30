@@ -2,7 +2,9 @@ import cv2
 import numpy as np
 import tensorflow as tf
 from tensorflow.keras.preprocessing.image import load_img, img_to_array
-from PIL import ImageGrab
+
+# need to find Linux-friendly alternative
+# from PIL import ImageGrab
 
 import matplotlib.cm as cm
 import matplotlib.pyplot as plt
@@ -17,6 +19,7 @@ class Sightseer(object):
 		gray_frame = cv2.cvtColor(frame, cv2.COLOR_BGR2GRAY)
 		return gray_frame
 
+	# Experimental
 	def load_webcam(self, return_data=True, set_gray=True, kill_key="q", width=160, height=120):
 
 		cap = cv2.VideoCapture(0)
@@ -46,34 +49,35 @@ class Sightseer(object):
 			frames = np.array(frames)
 			return frames
 		
-	def screen_grab(self, set_gray=True, write_data=True, return_data=True, kill_key="q", filename='output.avi', width=400, height=400):
-		fourcc = cv2.VideoWriter_fourcc(*'XVID')
-		out = cv2.VideoWriter(filename, fourcc, 20.0, (640, 480))
+	# Experimental
+	# def screen_grab(self, set_gray=True, write_data=True, return_data=True, kill_key="q", filename='output.avi', width=400, height=400):
+	# 	fourcc = cv2.VideoWriter_fourcc(*'XVID')
+	# 	out = cv2.VideoWriter(filename, fourcc, 20.0, (640, 480))
 
-		frames = []
+	# 	frames = []
 
-		while True:
-			img = np.array(ImageGrab.grab(bbox=(0, 0, width, height)))
-			frame = cv2.cvtColor(img, cv2.COLOR_RGB2BGR)
+	# 	while True:
+	# 		img = np.array(ImageGrab.grab(bbox=(0, 0, width, height)))
+	# 		frame = cv2.cvtColor(img, cv2.COLOR_RGB2BGR)
 
-			if write_data:
-				out.write(imcv)
+	# 		if write_data:
+	# 			out.write(imcv)
 
-			if set_gray:
-				frame = self.render_grayscale(img)
+	# 		if set_gray:
+	# 			frame = self.render_grayscale(img)
 
-			cv2.imshow('frame', frame)
-			frames.append(frame)
+	# 		cv2.imshow('frame', frame)
+	# 		frames.append(frame)
 
-			if cv2.waitKey(1) & 0xFF == ord(kill_key):
-				break
+	# 		if cv2.waitKey(1) & 0xFF == ord(kill_key):
+	# 			break
 
-		out.release()
-		cv2.destroyAllWindows()
+	# 	out.release()
+	# 	cv2.destroyAllWindows()
 
-		if return_data:
-			frames = np.array(frames)
-			return frames
+	# 	if return_data:
+	# 		frames = np.array(frames)
+	# 		return frames
 
 	def load_vidsource(self, filepath, return_data=True, set_gray=False):
 		self.filepath = filepath
@@ -113,7 +117,7 @@ class Sightseer(object):
 		image_path = image_path.split('/')
 		img_name = image_path[-1]
 		img_name = img_name.split('.')
-		img_name = img_name[0] + "_detected." + img_name[-1]
+		img_name = img_name[0] + "_preds." + img_name[-1]
 		image_path = "/".join(image_path[:-1]) + "/" + img_name
 
 		return image_path	
