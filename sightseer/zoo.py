@@ -143,7 +143,7 @@ class YOLOv3Client(object):
 		"""
 		Resizes image to appropriate dimensions for YOLOv3
 		"""
-		new_h, new_w, _ = image.shape
+		new_h, new_w = image.shape[:2]
 
 		if (float(self.net_w)/new_w) < (float(self.net_h)/new_h):
 			new_h = (new_h * self.net_w)//new_w
