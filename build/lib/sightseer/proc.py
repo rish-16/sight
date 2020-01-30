@@ -1,6 +1,7 @@
 import io
 import json
 import glob
+import os
 from PIL import Image
 import xml.etree.ElementTree as ET
 import tensorflow as tf
