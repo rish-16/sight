@@ -3,8 +3,11 @@ import numpy as np
 import tensorflow as tf
 from tensorflow.keras.preprocessing.image import load_img, img_to_array
 from PIL import ImageGrab
+
+import matplotlib.cm as cm
 import matplotlib.pyplot as plt
 from matplotlib.patches import Rectangle
+import matplotlib.animation as animation
 
 class Sightseer(object):
 	def __init__(self):
@@ -110,7 +113,7 @@ class Sightseer(object):
 		image_path = image_path.split('/')
 		img_name = image_path[-1]
 		img_name = img_name.split('.')
-		img_name = img_name[0] + "_detected." + img_name[1]
+		img_name = img_name[0] + "_detected." + img_name[-1]
 		image_path = "/".join(image_path[:-1]) + "/" + img_name
 
 		return image_path	
@@ -122,3 +125,16 @@ class Sightseer(object):
 		if save_image:
 			new_filepath = self.get_final_filepath(self.filepath)
 			plt.savefig(new_filepath)
+	
+	def render_footage(self, frames):
+		fig = plt.figure()
+		final_frames = []
+
+		for i in range(len(frames)):
+			final_frames.append([plt.imshow(frames[i], animated=True)])
+		
+		ani = animation.ArtistAnimation(fig, final_frames, interval=50, blit=True, repeat_delay=1000)
+		final_filename = self.get_final_filepath(self.filepath)
+		ani.save(final_filename)
+
+		plt.show()
