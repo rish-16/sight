@@ -108,7 +108,7 @@ preds, pred_img = yolo.predict(image, return_img=True)
 ss.render_image(pred_img)
 ```
 
-To use the model for frames from a video, you can use the `framewise_predict` method:
+To run the model on frames from a video, you can use the `framewise_predict` method:
 
 ```python
 from sightseer import Sightseer
@@ -117,7 +117,7 @@ from sightseer.zoo import YOLOv3Client
 yolo = YOLOv3Client()
 yolo.load_model() # downloads weights
 
-# loading image from local system
+# loading video from local system
 ss = Sightseer()
 frames = ss.load_vidsource("./assets/video.mp4")
 
