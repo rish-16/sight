@@ -356,7 +356,7 @@ class YOLOv3Client(object):
 		final_preds = []
 		final_frames = []
 
-		for i in range(len(frames))
+		for i in range(len(frames)):
 			print ("Frame {}".format(i))
 
 			cur_preds, edited_frame = self.predict(frames[i], return_img=True, verbose=False)
