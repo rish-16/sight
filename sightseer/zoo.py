@@ -370,14 +370,42 @@ class YOLOv3Client(object):
 		else:
 			return box_list
 
-	def framewise_predict(self, vid_frames):
+	def framewise_predict(self, frames, verbose=True):
+		# final_preds = []
+		# final_frames = []
+		# for frame in vid_frames:
+		# 	cur_preds, edited_frame = self.predict(frame, return_img=True, verbose=False)
+
+		# 	final_preds.append(cur_preds)
+		# 	final_frames.append(edited_frame)
+
+		# return final_preds, final_frames
+
+		image_h, image_w = frames[0].shape[:2]
+
+		pred_frames = []
+
+		for i in range(len(frames)):
+			pred_frames.append(self.preprocess(frames[i]))
+
+		pred_frames = self.yolo_model.predict(pred_frames)
+
 		final_preds = []
 		final_frames = []
-		for frame in vid_frames:
-			cur_preds, edited_frame = self.predict(frame, return_img=True, verbose=False)
+		
+		for i in range(len(pred_frames)):
+			print ("Frame {}".format(i))
+			boxes = []
+			for j in range(len(pred_frames[i])):
+				boxes += self.decode_preds(pred_frames[i][j], self.anchors[j])
 
-			final_preds.append(cur_preds)
-			final_frames.append(edited_frame)
+			boxes = self.rectify_boxes(boxes, image_h, image_w)
+			boxes = self.non_maximum_suppression(boxes)
+
+			box_list, box_image = self.get_boxes(frames[i], boxes, verbose)
+
+			final_preds.append(box_list)
+			final_frames.append(box_image)
 
 		return final_preds, final_frames
 

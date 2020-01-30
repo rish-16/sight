@@ -76,7 +76,7 @@ class Sightseer(object):
 		self.filepath = filepath
 		vidcap = cv2.VideoCapture(filepath)
 
-		print ("Extract frames from video...")
+		print ("Extracting frames from video...")
 		
 		frames = []
 
