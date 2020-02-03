@@ -46,7 +46,7 @@ pip install sightseer
 
 1. `YOLOv3Client` (Darknet by Joseph Redmon)
 
-> Facebook AI's *Mask R-CNN* will be out in the v1.2.0 release. For more information on model release, check out the [Roadmap](https://github.com/rish-16/sight/blob/master/ROADMAP.md).
+> By popular demand, *Tiny YOLO* will be out in the v1.2.0 release. For more information on model release, check out the [Roadmap](https://github.com/rish-16/sight/blob/master/ROADMAP.md).
 
 
 # Components of `sightseer`

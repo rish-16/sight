@@ -44,7 +44,7 @@ class YOLOv3Client(object):
 		if os.path.exists("./bin/yolov3.weights"):
 			print ("Weights already exist. Proceeding to load YOLOv3Client...")
 		else:
-			print ("Downloading weights. This may may take a moment...")
+			print ("Downloading weights. This may take a moment...")
 	
 			wget.download(self.weights_url, os.getcwd() + "/yolov3.weights")
 
@@ -55,7 +55,7 @@ class YOLOv3Client(object):
 
 	def load_architecture(self):
 		"""
-		Returns tf.keras.models.Model instance
+		Returns a tf.keras.models.Model instance
 		"""
 		inp_image = Input(shape=[None, None, 3])
 
@@ -321,8 +321,9 @@ class YOLOv3Client(object):
 			self.yolo_model = self.load_architecture() # loading weights into model
 			loader.load_weights(self.yolo_model, verbose)
 
-			self.yolo_model.save("./bin/yolov3.h5") # saves .h5 weights file
-			os.remove("./bin/yolov3.weights") # removes original .weights file
+			if cache:
+				self.yolo_model.save("./bin/yolov3.h5") # saves .h5 weights file
+				os.remove("./bin/yolov3.weights") # removes original .weights file
 
 	def predict(self, original_image, return_img=False, verbose=True):
 		"""
@@ -368,4 +369,41 @@ class YOLOv3Client(object):
 
 class MaskRCNNClient(object):
 	def __init__(self):
-		pass
+		self.mask_rcnn_model = None
+		self.weights_url = "https://github.com/matterport/Mask_RCNN/releases/download/v2.0/mask_rcnn_coco.h5"
+
+	def download_weights(self):
+		"""
+		Downloads the weights from online and saves them locally
+		"""
+
+		if os.path.exists("./bin/mask_rcnn_coco.h5"):
+			print ("Weights already exist. Proceeding to load MaskRCNNClient...")
+		else:
+			print ("Downloading weights. This may take a moment...")
+	
+			wget.download(self.weights_url, os.getcwd() + "/mask_rcnn_coco.weights")
+
+			if not os.path.exists("./bin"):
+				os.mkdir("./bin", 0o755) # configuring admin rights
+			
+			shutil.move("./mask_rcnn_coco.weights", "./bin/mask_rcnn_coco.weights")
+
+			print ("\n\nWeights downloaded successfully!")
+
+	def load_architecture(self):
+		"""
+		Returns a tf.keras.models.Model instance
+		"""
+
+		inp_image = Image(shape=[None, None, 3])
+
+	def load_model(self):
+		if os.path.exists("./bin/mask_rcnn_coco.h5"):
+			print ("Weights already exist. Proceeding to load MaskRCNNClient...")
+			self.mask_rcnn_model = load_model("./bin/mask_rcnn_coco.h5")
+		else:
+			self.download_weights()
+			loader = SightLoader("./bin/mask_rcnn_coco.h5")
+
+			self.mask_rcnn_model = self.load_architecture()

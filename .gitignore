@@ -1,3 +1,4 @@
+bin/mask_rcnn_coco.weights
 bin/yolov3.weights
 bin/yolov3.cfg
 bin/yolov3.h5
