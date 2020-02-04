@@ -16,9 +16,12 @@ This document acts as a sort of to-do list. It contains all the present requirem
 
 ---
 
-## `v1.1.0` Planned Release
+## `v1.2.0` Planned Release
 
 The upcoming version will tentatively contain the following features:
+
+### Zoo
+- `TinyYOLOClient`
 
 ### Sightseer
 - Video loading
@@ -49,16 +52,17 @@ The upcoming version will tentatively contain the following features:
 
 ### Zoo 
 
-*Models*
+*Models – Mostly trained on the COCO dataset*
 
 - [x] YOLOv3 (`YOLOv3Client`)
+- [ ] TinyYOLO (`TinyYOLOClient`)
 - [ ] Mask RCNN (`MaskRCNNClient`)
 - [ ] Fast RCNN (`FastRCNNClient`)
 - [ ] Faster RCNN (`FASTERRCNNClient`)
-- [ ] TinyYOLO (`TinyYOLOClient`)
 - [ ] TensorFlow Object Detection (`TFODClient`)
 - [ ] Single Shot Detector (`SSDClient`)
 - [ ] TensorFlow Object Counting (`TFOCClient`)
+- [ ] UNet Image Segmentation (`ImgSegClient`)
 
 *Add-ons*
 

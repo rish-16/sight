@@ -19,27 +19,12 @@ logging.disable(logging.WARNING)
 
 class YOLOv3Client(object):
 	def __init__(self, nms_threshold=0.45, obj_threshold=0.5, net_h=416, net_w=416, anchors=[[116, 90, 156, 198, 373, 326], [30, 61, 62, 45, 59, 119], [10, 13, 16, 30, 33, 23]]):
-		"""
-		Params:
-		-------
-
-		- nsm_threshold (float): Non Maximum Suppression threshold for selecting bounding boxes ina region
-			default: 0.45
-			min: 0
-			max: 1
-		
-		- obj_threshold (float): 
-			default: 0.5
-			min: 0
-			max: 1
-
-		- 
-		"""
 		self.nms_threshold = nms_threshold
 		self.obj_threshold = obj_threshold
 		self.net_h, self.net_w = net_h, net_w
 		self.anchors = anchors
-		self.yolo_model = None
+		self.yolo_model = None # initialised after weights are loaded into model
+		self.weights_url = "https://pjreddie.com/media/files/yolov3.weights"
 		self.all_labels = ["person", "bicycle", "car", "motorbike", "aeroplane", "bus", "train", "truck",
 						"boat", "traffic light", "fire hydrant", "stop sign", "parking meter", "bench",
 						"bird", "cat", "dog", "horse", "sheep", "cow", "elephant", "bear", "zebra", "giraffe",
@@ -59,10 +44,9 @@ class YOLOv3Client(object):
 		if os.path.exists("./bin/yolov3.weights"):
 			print ("Weights already exist. Proceeding to load YOLOv3Client...")
 		else:
-			print ("Downloading weights. This may may take a moment...")
-			weights_url = "https://pjreddie.com/media/files/yolov3.weights"
+			print ("Downloading weights. This may take a moment...")
 	
-			wget.download(weights_url, os.getcwd() + "/yolov3.weights")
+			wget.download(self.weights_url, os.getcwd() + "/yolov3.weights")
 
 			os.mkdir("./bin", 0o755) # configuring admin rights
 			shutil.move("./yolov3.weights", "./bin/yolov3.weights")
@@ -71,7 +55,7 @@ class YOLOv3Client(object):
 
 	def load_architecture(self):
 		"""
-		Returns tf.keras.models.Model instance
+		Returns a tf.keras.models.Model instance
 		"""
 		inp_image = Input(shape=[None, None, 3])
 
@@ -159,7 +143,7 @@ class YOLOv3Client(object):
 		"""
 		Resizes image to appropriate dimensions for YOLOv3
 		"""
-		new_h, new_w, _ = image.shape
+		new_h, new_w = image.shape[:2]
 
 		if (float(self.net_w)/new_w) < (float(self.net_h)/new_h):
 			new_h = (new_h * self.net_w)//new_w
@@ -318,13 +302,10 @@ class YOLOv3Client(object):
 				else:
 					r, g, b = 0, 255, 0
 
-				cv2.rectangle(image, (box.xmin, box.ymin), (box.xmax, box.ymax), (r, g, b), 1)
+				cv2.rectangle(image, (box.xmin, box.ymin), (box.xmax, box.ymax), (r, g, b), 2)
 				cv2.putText(image, '{} {:.3f}'.format(final_label, box.get_confidence()), (box.xmax, box.ymin - 13), cv2.FONT_HERSHEY_SIMPLEX, 1e-3 * image.shape[0], (r, g, b), 2)
 
 		return final_boxes, image
-
-	def save_model(self):
-		self.yolo_model.save("./bin/yolov3.h5")
 
 	def load_model(self, default_path="./bin/yolov3.weights", cache=True, verbose=True):
 		"""
@@ -340,7 +321,9 @@ class YOLOv3Client(object):
 			self.yolo_model = self.load_architecture() # loading weights into model
 			loader.load_weights(self.yolo_model, verbose)
 
-			self.save_model()
+			if cache:
+				self.yolo_model.save("./bin/yolov3.h5") # saves .h5 weights file
+				os.remove("./bin/yolov3.weights") # removes original .weights file
 
 	def predict(self, original_image, return_img=False, verbose=True):
 		"""
@@ -370,11 +353,14 @@ class YOLOv3Client(object):
 		else:
 			return box_list
 
-	def framewise_predict(self, vid_frames):
+	def framewise_predict(self, frames, verbose=True):
 		final_preds = []
 		final_frames = []
-		for frame in vid_frames:
-			cur_preds, edited_frame = self.predict(frame, return_img=True, verbose=False)
+
+		for i in range(len(frames)):
+			print ("Frame {}".format(i))
+
+			cur_preds, edited_frame = self.predict(frames[i], return_img=True, verbose=False)
 
 			final_preds.append(cur_preds)
 			final_frames.append(edited_frame)
@@ -383,4 +369,41 @@ class YOLOv3Client(object):
 
 class MaskRCNNClient(object):
 	def __init__(self):
-		pass
+		self.mask_rcnn_model = None
+		self.weights_url = "https://github.com/matterport/Mask_RCNN/releases/download/v2.0/mask_rcnn_coco.h5"
+
+	def download_weights(self):
+		"""
+		Downloads the weights from online and saves them locally
+		"""
+
+		if os.path.exists("./bin/mask_rcnn_coco.h5"):
+			print ("Weights already exist. Proceeding to load MaskRCNNClient...")
+		else:
+			print ("Downloading weights. This may take a moment...")
+	
+			wget.download(self.weights_url, os.getcwd() + "/mask_rcnn_coco.weights")
+
+			if not os.path.exists("./bin"):
+				os.mkdir("./bin", 0o755) # configuring admin rights
+			
+			shutil.move("./mask_rcnn_coco.weights", "./bin/mask_rcnn_coco.weights")
+
+			print ("\n\nWeights downloaded successfully!")
+
+	def load_architecture(self):
+		"""
+		Returns a tf.keras.models.Model instance
+		"""
+
+		inp_image = Image(shape=[None, None, 3])
+
+	def load_model(self):
+		if os.path.exists("./bin/mask_rcnn_coco.h5"):
+			print ("Weights already exist. Proceeding to load MaskRCNNClient...")
+			self.mask_rcnn_model = load_model("./bin/mask_rcnn_coco.h5")
+		else:
+			self.download_weights()
+			loader = SightLoader("./bin/mask_rcnn_coco.h5")
+
+			self.mask_rcnn_model = self.load_architecture()

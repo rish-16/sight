@@ -1,6 +1,6 @@
 Metadata-Version: 2.1
 Name: sightseer
-Version: 1.0.1.1
+Version: 1.1.3
 Summary: State-of-the-art Computer Vision and Object Detection for TensorFlow.
 Home-page: https://github.com/rish-16/sight
 Author: Rishabh Anand
@@ -17,6 +17,9 @@ Description: <p align="center">
             <a href="https://pypi.org/project/sightseer/">
                 <img alt="PyPI" src="https://img.shields.io/pypi/v/sightseer?color=%231dd1a1">
             </a>
+            <a href="https://pepy.tech/project/sightseer">
+                <img alr="PyPi - Downloads" src="https://pepy.tech/badge/sightseer">
+            </a>
             <a href="https://github.com/rish-16/sight/blob/master/LICENSE">
         		<img alt="PyPI - License" src="https://img.shields.io/pypi/l/sightseer?color=%23feca57">
             </a>
@@ -30,7 +33,7 @@ Description: <p align="center">
         <p>Made by Rishabh Anand • <a href="https://rish-16.github.io">https://rish-16.github.io</a></p>
         </h5>
         
-        *sightseer* provides state-of-the-art general-purpose architectures (YOLOv3, MaskRCNN, Fast/Faster RCNN, SSD...) for Computer Vision and Object Detection tasks with 30+ pretrained models written in TensorFlow 1.15.
+        `sightseer` provides state-of-the-art general-purpose architectures (YOLOv3, MaskRCNN, Fast/Faster RCNN, SSD...) for Computer Vision and Object Detection tasks with 30+ pretrained models written in TensorFlow 1.15.
         
         ## Installation
         
@@ -52,7 +55,7 @@ Description: <p align="center">
         
         1. `YOLOv3Client` (Darknet by Joseph Redmon)
         
-        > Facebook AI's *Mask R-CNN* will be out in the v1.1.0 release. For more information on model release, check out the [Roadmap](https://github.com/rish-16/sight/blob/master/ROADMAP.md).
+        > Facebook AI's *Mask R-CNN* will be out in the v1.2.0 release. For more information on model release, check out the [Roadmap](https://github.com/rish-16/sight/blob/master/ROADMAP.md).
         
         
         # Components of `sightseer`
@@ -72,18 +75,27 @@ Description: <p align="center">
         
         ## Features
         
-        <strong>1. Loading images</strong>
-        
         Footage or raw images can be rendered using `Sightseer` before being ingested into models or further preprocessed.
+        
+        <strong>1a. Loading images</strong>
         
         ```python
         from sightseer import Sightseer
         
         ss = Sightseer()
-        image = ss.load_image("path/to/image")
+        image = ss.load_image("path/to/image") # return numpy array representation of image
         ```
         
-        > Support for video, webcam footage, and screen recording will be out in the coming v1.1.0 release.
+        <strong>1b. Loading videos</strong>
+        
+        ```python
+        from sightseer import Sightseer
+        
+        ss = Sightseer()
+        frames = ss.load_vidsource("path/to/video") # returns nested array of frames
+        ```
+        
+        > Support for video, webcam footage, and screen recording will be out in the coming v1.2.0 release.
         
         <strong>2. Using models from `sightseer.zoo`</strong>
         
@@ -92,28 +104,51 @@ Description: <p align="center">
         ```python
         from sightseer import Sightseer
         from sightseer.zoo import YOLOv3Client
-        from pprint import pprint
         
         yolo = YOLOv3Client()
         yolo.load_model() # downloads weights
         
         # loading image from local system
         ss = Sightseer()
-        image = ss.load_image("./images/road.jpg")
+        image = ss.load_image("./assets/road.jpg")
         
         # getting labels, confidence scores, and bounding box data
         preds, pred_img = yolo.predict(image, return_img=True)
-        pprint (preds)
         ss.render_image(pred_img)
         ```
         
-        This can even be converted into a Command-line Interface (CLI) using arguments from `argparse`.
+        To run the model on frames from a video, you can use the `framewise_predict` method:
+        
+        ```python
+        from sightseer import Sightseer
+        from sightseer.zoo import YOLOv3Client
+        
+        yolo = YOLOv3Client()
+        yolo.load_model() # downloads weights
+        
+        # loading video from local system
+        ss = Sightseer()
+        frames = ss.load_vidsource("./assets/video.mp4")
+        
+        """
+        For best results, run on a GPU
+        """
+        # getting labels, confidence scores, and bounding box data
+        preds, pred_frames = yolo.framewise_predict(frames)
+        ss.render_footage(pred_frames) # plays the video and saves the footage
+        ```
+        
+        The module can even be repurposed into a Command-line Interface (CLI) app using the [`argparse`](https://docs.python.org/3/library/argparse.html) library.
         
         ## Contributing
         
         Suggestions, improvements, and enhancements are always welcome! If you have any issues, please do raise one in the Issues section. If you have an improvement, do file an issue to discuss the suggestion before creating a PR.
         
         All ideas – no matter how outrageous – welcome!
+        
+        Before committing, please check the [Roadmap](https://github.com/rish-16/sight/blob/master/ROADMAP.md) to see if proposed features are already in-development or not.
+        
+        > **Note:** Please commit all changes to the `development` experimentation branch instead of `master`.
         
         ## Licence
         
