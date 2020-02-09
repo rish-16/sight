@@ -370,7 +370,7 @@ class YOLOv3Client(object):
 class TinyYOLOClient(object):
 	def __init__(self):
 		self.tiny_yolo_model = None
-		self.weights_url = ""
+		self.weights_url = "https://pjreddie.com/media/files/yolov3-tiny.weights"
 
 	def download_weights(self):
 		"""
@@ -404,6 +404,3 @@ class TinyYOLOClient(object):
 			self.tiny_yolo_model = load_model("./bin/tiny_yolo.h5")
 		else:
 			self.download_weights()
-			loader = SightLoader("./bin/tiny_yolo.h5")
-
-			self.tiny_yolo_model = self.load_architecture()

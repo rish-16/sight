@@ -1,5 +1,5 @@
 from sightseer import Sightseer
-from sightseer.zoo import MaskRCNNClient
+from sightseer.zoo import TinyYOLOClient
 
-rcnn = MaskRCNNClient()
-rcnn.load_model() # downloads weights
+tyolo = TinyYOLOClient()
+tyolo.load_model() # downloads weights
