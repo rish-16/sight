@@ -367,27 +367,27 @@ class YOLOv3Client(object):
 
 		return final_preds, final_frames
 
-class MaskRCNNClient(object):
+class TinyYOLOClient(object):
 	def __init__(self):
-		self.mask_rcnn_model = None
-		self.weights_url = "https://github.com/matterport/Mask_RCNN/releases/download/v2.0/mask_rcnn_coco.h5"
+		self.tiny_yolo_model = None
+		self.weights_url = ""
 
 	def download_weights(self):
 		"""
 		Downloads the weights from online and saves them locally
 		"""
 
-		if os.path.exists("./bin/mask_rcnn_coco.h5"):
-			print ("Weights already exist. Proceeding to load MaskRCNNClient...")
+		if os.path.exists("./bin/tiny_yolo.h5"):
+			print ("Weights already exist. Proceeding to load TinyYOLOClient...")
 		else:
 			print ("Downloading weights. This may take a moment...")
 	
-			wget.download(self.weights_url, os.getcwd() + "/mask_rcnn_coco.weights")
+			wget.download(self.weights_url, os.getcwd() + "/tiny_yolo.weights")
 
 			if not os.path.exists("./bin"):
 				os.mkdir("./bin", 0o755) # configuring admin rights
 			
-			shutil.move("./mask_rcnn_coco.weights", "./bin/mask_rcnn_coco.weights")
+			shutil.move("./tiny_yolo.weights", "./bin/tiny_yolo.weights")
 
 			print ("\n\nWeights downloaded successfully!")
 
@@ -399,11 +399,11 @@ class MaskRCNNClient(object):
 		inp_image = Image(shape=[None, None, 3])
 
 	def load_model(self):
-		if os.path.exists("./bin/mask_rcnn_coco.h5"):
-			print ("Weights already exist. Proceeding to load MaskRCNNClient...")
-			self.mask_rcnn_model = load_model("./bin/mask_rcnn_coco.h5")
+		if os.path.exists("./bin/tiny_yolo.h5"):
+			print ("Weights already exist. Proceeding to load TinyYOLOClient...")
+			self.tiny_yolo_model = load_model("./bin/tiny_yolo.h5")
 		else:
 			self.download_weights()
-			loader = SightLoader("./bin/mask_rcnn_coco.h5")
+			loader = SightLoader("./bin/tiny_yolo.h5")
 
-			self.mask_rcnn_model = self.load_architecture()
+			self.tiny_yolo_model = self.load_architecture()
