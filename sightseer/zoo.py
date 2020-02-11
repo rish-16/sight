@@ -403,4 +403,4 @@ class TinyYOLOClient(object):
 			print ("Weights already exist. Proceeding to load TinyYOLOClient...")
 			self.tiny_yolo_model = load_model("./bin/tiny_yolo.h5")
 		else:
-			self.download_weights()
+			self.download_weights()	
