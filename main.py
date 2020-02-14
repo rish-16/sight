@@ -5,7 +5,8 @@ yolo = YOLOv3Client()
 yolo.load_model()
 
 ss = Sightseer()
-image = ss.load_image("./test_data/img/street.jpg")
+frames = ss.load_vidsource("./test_data/img/london.mp4")
+print (frames.shape)
 
-preds, det_image = yolo.predict(image, return_img=True)
-ss.render_image(det_image)
+preds, det_frames = yolo.framewise_predict(frames, stride=10, verbose=False)
+ss.render_footage(det_frames)

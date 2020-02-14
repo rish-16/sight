@@ -97,7 +97,7 @@ class SightLoader():
     def reset_offset(self):
         self.offset = 0		
 
-class ConvBlock():
+class Layer():
 	def get_conv_block(inp, convs, skip=True):
 		x = inp
 		count = 0

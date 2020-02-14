@@ -79,13 +79,14 @@ class Sightseer(object):
 	# 		frames = np.array(frames)
 	# 		return frames
 
-	def load_vidsource(self, filepath, return_data=True, set_gray=False):
+	def load_vidsource(self, filepath, stride=5, return_data=True, set_gray=False):
 		self.filepath = filepath
 		vidcap = cv2.VideoCapture(filepath)
-
-		print ("Extracting frames from video...")
 		
 		frames = []
+		cur_frame = 0
+
+		print ("Extracting frames from video...")
 
 		while vidcap.isOpened():
 			frame_exists, frame = vidcap.read()
@@ -97,6 +98,10 @@ class Sightseer(object):
 				frame = self.render_grayscale(frame)
 
 			frames.append(frame)
+
+			cur_frame += 1
+
+		print ('Number of frames: {}'.format(len(frames)))
 		
 		vidcap.release()
 		cv2.destroyAllWindows()
@@ -130,7 +135,7 @@ class Sightseer(object):
 			new_filepath = self.get_final_filepath(self.filepath)
 			plt.savefig(new_filepath)
 	
-	def render_footage(self, frames):
+	def render_footage(self, frames, save_footage=True):
 		fig = plt.figure()
 		final_frames = []
 
@@ -138,7 +143,9 @@ class Sightseer(object):
 			final_frames.append([plt.imshow(frames[i], animated=True)])
 		
 		ani = animation.ArtistAnimation(fig, final_frames, interval=50, blit=True, repeat_delay=1000)
-		final_filename = self.get_final_filepath(self.filepath)
-		ani.save(final_filename)
+
+		if save_footage:
+			final_filename = self.get_final_filepath(self.filepath)
+			ani.save(final_filename)
 
 		plt.show()
