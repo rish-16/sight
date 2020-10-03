@@ -18,5 +18,13 @@ setup(
   author_email="mail.rishabh.anand@gmail.com",
   license="ASF",
   packages=["sightseer"],
+  install_requires=[
+      "tensorflow",
+      "pillow",
+      "opencv-python",
+      "wget",
+      "pandas",
+      "matplotlib"
+  ],
   zip_safe=False
 )
