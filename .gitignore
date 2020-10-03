@@ -1,3 +1,4 @@
+venv/
 bin/tiny_yolo.weights
 bin/yolov3.weights
 bin/yolov3.cfg
