@@ -19,7 +19,7 @@ setup(
   license="ASF",
   packages=["sightseer"],
   install_requires=[
-      "tensorflow",
+      "tensorflow==1.15.4",
       "pillow",
       "opencv-python",
       "wget",
