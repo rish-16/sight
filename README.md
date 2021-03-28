@@ -26,7 +26,7 @@
 
 `sightseer` provides state-of-the-art general-purpose architectures (YOLOv3, MaskRCNN, Fast/Faster RCNN, SSD...) for Computer Vision and Object Detection tasks with 30+ pretrained models written in TensorFlow 1.15.
 
-> I'd like to fully credit [Huynh Ngoc Anh](https://github.com/experiencor) for their YOLOv3 model architecture code. I've repackaged that chunk as a callable API wrapper. Thank you Ngoc Anh :D
+> I'd like to fully credit [Huynh Ngoc Anh](https://github.com/experiencor) for their YOLOv3 model architecture code. I've repackaged that chunk as a callable python API wrapper under the model zoo. This project would not be possible without their contribution.
 
 ## Installation
 
